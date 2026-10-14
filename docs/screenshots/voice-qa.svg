@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 960" width="540" height="960">
+  <rect width="540" height="960" fill="#f7f8fa"/>
+  <rect width="540" height="44" fill="#ffffff"/>
+  <text x="40" y="28" font-size="14" fill="#323233">20:44</text>
+  <rect y="44" width="540" height="64" fill="#1989fa"/>
+  <text x="32" y="86" font-size="22" font-weight="bold" fill="#ffffff">智药问答</text>
+
+  <!-- 对话历史 -->
+  <rect x="32" y="140" width="380" height="80" rx="12" fill="#1989fa"/>
+  <text x="52" y="170" font-size="18" fill="#ffffff">妈妈说：</text>
+  <text x="52" y="200" font-size="16" fill="#ffffff">高血压的人能吃布洛芬吗？</text>
+
+  <rect x="100" y="240" width="408" height="120" rx="12" fill="#ffffff" stroke="#ebedf0"/>
+  <text x="120" y="270" font-size="14" fill="#646566">智药 AI</text>
+  <text x="120" y="300" font-size="16" fill="#323233">高血压长期患者服用布洛芬</text>
+  <text x="120" y="324" font-size="16" fill="#323233">可能影响降压效果，建议改用</text>
+  <text x="120" y="348" font-size="16" fill="#323233">对乙酰氨基酚。如有不适请</text>
+  <text x="120" y="372" font-size="16" fill="#323233">立即咨询医生。</text>
+
+  <!-- 按住说话按钮 -->
+  <circle cx="270" cy="800" r="80" fill="#ee0a24"/>
+  <text x="270" y="790" font-size="48" fill="#ffffff" text-anchor="middle">🎙️</text>
+  <text x="270" y="830" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">按住说话</text>
+
+  <text x="270" y="920" font-size="14" fill="#969799" text-anchor="middle">说完松手 · 自动回答 · 自动朗读</text>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 960" width="540" height="960">
+  <rect width="540" height="960" fill="#f7f8fa"/>
+  <rect width="540" height="44" fill="#ffffff"/>
+  <text x="40" y="28" font-size="14" fill="#323233">20:45</text>
+  <rect y="44" width="540" height="64" fill="#1989fa"/>
+  <text x="32" y="86" font-size="22" font-weight="bold" fill="#ffffff">服药提醒</text>
+
+  <!-- 已有提醒 -->
+  <rect x="32" y="140" width="476" height="120" rx="12" fill="#ffffff"/>
+  <circle cx="68" cy="180" r="16" fill="#1989fa"/>
+  <text x="68" y="186" font-size="14" fill="#ffffff" text-anchor="middle">⏰</text>
+  <text x="100" y="180" font-size="20" font-weight="bold" fill="#323233">08:00</text>
+  <text x="100" y="208" font-size="14" fill="#646566">氨氯地平片 · 每日</text>
+  <text x="100" y="232" font-size="13" fill="#1989fa">🔊 语音播报 · 开启</text>
+  <rect x="440" y="200" width="48" height="28" rx="14" fill="#1989fa"/>
+  <circle cx="472" cy="214" r="12" fill="#ffffff"/>
+
+  <rect x="32" y="280" width="476" height="120" rx="12" fill="#ffffff"/>
+  <circle cx="68" cy="320" r="16" fill="#1989fa"/>
+  <text x="68" y="326" font-size="14" fill="#ffffff" text-anchor="middle">⏰</text>
+  <text x="100" y="320" font-size="20" font-weight="bold" fill="#323233">20:00</text>
+  <text x="100" y="348" font-size="14" fill="#646566">阿司匹林 + 晚餐</text>
+  <text x="100" y="372" font-size="13" fill="#1989fa">🔊 语音播报 · 关闭</text>
+  <rect x="440" y="342" width="48" height="28" rx="14" fill="#dcdee0"/>
+  <circle cx="456" cy="356" r="12" fill="#ffffff"/>
+
+  <rect x="120" y="640" width="300" height="56" rx="28" fill="#1989fa"/>
+  <text x="270" y="676" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">+ 新增提醒</text>
+</svg>

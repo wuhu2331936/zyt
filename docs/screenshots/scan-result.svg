@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 960" width="540" height="960">
+  <rect width="540" height="960" fill="#f7f8fa"/>
+  <rect width="540" height="44" fill="#ffffff"/>
+  <text x="40" y="28" font-size="14" fill="#323233">20:42</text>
+  <text x="500" y="86" font-size="22" fill="#ffffff" text-anchor="end">×</text>
+  <rect y="44" width="540" height="64" fill="#1989fa"/>
+  <text x="32" y="86" font-size="22" font-weight="bold" fill="#ffffff">拍照识药</text>
+
+  <rect x="32" y="136" width="476" height="280" rx="12" fill="#e6f7ff"/>
+  <text x="80" y="200" font-size="22" font-weight="bold" fill="#323233">氨氯地平片</text>
+  <text x="80" y="232" font-size="14" fill="#646566">络活喜 / 5mg × 7 片</text>
+  <rect x="280" y="290" width="200" height="90" rx="8" fill="#ffffff"/>
+  <text x="290" y="320" font-size="13" fill="#646566">用法用量</text>
+  <text x="290" y="350" font-size="20" font-weight="bold" fill="#1989fa">每日 1 次</text>
+  <text x="380" y="350" font-size="20" font-weight="bold" fill="#1989fa">1 片</text>
+  <text x="290" y="375" font-size="13" fill="#969799">口服 · 饭后服用</text>
+
+  <rect x="40" y="450" width="460" height="64" rx="32" fill="#1989fa"/>
+  <text x="270" y="490" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">✓ 加入我的清单</text>
+
+  <text x="270" y="560" font-size="14" fill="#969799" text-anchor="middle">识别自药盒照片 · 通义千问 VL</text>
+</svg>

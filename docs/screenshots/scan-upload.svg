@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 960" width="540" height="960">
+  <rect width="540" height="960" fill="#f7f8fa"/>
+  <rect width="540" height="44" fill="#ffffff"/>
+  <text x="40" y="28" font-size="14" fill="#323233">20:42</text>
+  <text x="490" y="28" font-size="14" fill="#323233" text-anchor="end">4G ●●●</text>
+  <rect y="44" width="540" height="64" fill="#1989fa"/>
+  <text x="32" y="86" font-size="22" font-weight="bold" fill="#ffffff">拍照识药</text>
+  <text x="500" y="86" font-size="22" fill="#ffffff" text-anchor="end">×</text>
+
+  <rect x="40" y="160" width="460" height="280" rx="12" fill="#ffffff" stroke="#ebedf0" stroke-width="2" stroke-dasharray="6,6"/>
+  <text x="270" y="280" font-size="56" fill="#1989fa" text-anchor="middle">📷</text>
+  <text x="270" y="340" font-size="18" font-weight="bold" fill="#323233" text-anchor="middle">点击上传药盒照片</text>
+  <text x="270" y="370" font-size="14" fill="#969799" text-anchor="middle">提示：正面、清晰、光线充足</text>
+
+  <rect x="40" y="470" width="460" height="64" rx="32" fill="#1989fa"/>
+  <text x="270" y="510" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">📁 从相册选择</text>
+  <rect x="40" y="554" width="460" height="64" rx="32" fill="#ffffff" stroke="#1989fa" stroke-width="2"/>
+  <text x="270" y="594" font-size="18" font-weight="bold" fill="#1989fa" text-anchor="middle">📸 立即拍摄</text>
+
+  <text x="270" y="690" font-size="14" fill="#969799" text-anchor="middle">AI 正在识别中通常需要 3-5 秒</text>
+</svg>

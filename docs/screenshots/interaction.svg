@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 960" width="540" height="960">
+  <rect width="540" height="960" fill="#f7f8fa"/>
+  <rect width="540" height="44" fill="#ffffff"/>
+  <text x="40" y="28" font-size="14" fill="#323233">20:43</text>
+  <rect y="44" width="540" height="64" fill="#1989fa"/>
+  <text x="32" y="86" font-size="22" font-weight="bold" fill="#ffffff">药物相互作用</text>
+
+  <!-- 风险总览 -->
+  <rect x="32" y="136" width="476" height="80" rx="12" fill="#fff5f5" stroke="#ee0a24" stroke-width="2"/>
+  <text x="60" y="174" font-size="20" font-weight="bold" fill="#ee0a24">⚠️ 检测到 1 条严禁同服</text>
+  <text x="60" y="200" font-size="14" fill="#646566">经 RAG 检索说明书，建议咨询医生</text>
+
+  <!-- 风险卡片 -->
+  <rect x="32" y="240" width="476" height="220" rx="12" fill="#ffffff" stroke="#ee0a24" stroke-width="1"/>
+  <circle cx="60" cy="276" r="16" fill="#ee0a24"/>
+  <text x="60" y="284" font-size="20" fill="#ffffff" text-anchor="middle">🔴</text>
+  <text x="92" y="280" font-size="20" font-weight="bold" fill="#ee0a24">严禁同服</text>
+  <text x="92" y="304" font-size="16" fill="#323233">华法林 + 阿司匹林</text>
+  <text x="60" y="350" font-size="14" fill="#646566">机制：两者均可抑制血小板聚集，</text>
+  <text x="60" y="372" font-size="14" fill="#646566">叠加使用显著增加胃出血风险。</text>
+  <rect x="60" y="396" width="420" height="48" rx="8" fill="#fff5f5"/>
+  <text x="76" y="425" font-size="14" fill="#ee0a24">建议：改用对乙酰氨基酚 (泰诺) 替代。</text>
+</svg>

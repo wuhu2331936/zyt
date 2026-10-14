@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 960" width="540" height="960">
+  <rect width="540" height="960" fill="#f7f8fa"/>
+  <!-- 状态栏 -->
+  <rect width="540" height="44" fill="#ffffff"/>
+  <text x="40" y="28" font-size="14" fill="#323233">20:41</text>
+  <text x="490" y="28" font-size="14" fill="#323233" text-anchor="end">4G ●●●</text>
+  <!-- 顶栏 -->
+  <rect y="44" width="540" height="64" fill="#1989fa"/>
+  <text x="32" y="86" font-size="22" font-weight="bold" fill="#ffffff">智药通</text>
+  <text x="500" y="86" font-size="22" fill="#ffffff" text-anchor="end">＋</text>
+  <!-- 今日提醒 -->
+  <text x="32" y="160" font-size="18" font-weight="bold" fill="#323233">今日服药提醒</text>
+  <rect x="32" y="180" width="476" height="80" rx="12" fill="#fff5f5" stroke="#ee0a24" stroke-width="1"/>
+  <circle cx="60" cy="220" r="14" fill="#ee0a24"/>
+  <text x="80" y="218" font-size="16" font-weight="bold" fill="#ee0a24">20:00</text>
+  <text x="80" y="244" font-size="14" fill="#323233">氨氯地平片 · 1 片</text>
+  <!-- 用药清单 -->
+  <text x="32" y="300" font-size="18" font-weight="bold" fill="#323233">我的用药清单</text>
+  <rect x="32" y="320" width="476" height="96" rx="12" fill="#ffffff"/>
+  <rect x="48" y="340" width="56" height="56" rx="8" fill="#1989fa"/>
+  <text x="76" y="376" font-size="20" fill="#ffffff" text-anchor="middle">💊</text>
+  <text x="120" y="354" font-size="18" font-weight="bold" fill="#323233">氨氯地平片</text>
+  <text x="120" y="378" font-size="14" fill="#646566">5mg · 每日 1 次 · 饭后</text>
+  <text x="120" y="402" font-size="12" fill="#1989fa">[VL 识别]</text>
+  <rect x="32" y="428" width="476" height="96" rx="12" fill="#ffffff"/>
+  <rect x="48" y="448" width="56" height="56" rx="8" fill="#07c160"/>
+  <text x="76" y="484" font-size="20" fill="#ffffff" text-anchor="middle">💊</text>
+  <text x="120" y="462" font-size="18" font-weight="bold" fill="#323233">阿司匹林肠溶片</text>
+  <text x="120" y="486" font-size="14" fill="#646566">100mg · 每日 1 次 · 睡前</text>
+  <text x="120" y="510" font-size="12" fill="#969799">[手动添加]</text>
+  <!-- 危险提示 -->
+  <rect x="32" y="544" width="476" height="64" rx="12" fill="#fff7e8"/>
+  <text x="60" y="572" font-size="16" font-weight="bold" fill="#ff9760">⚠️ 检测到 1 条相互作用风险</text>
+  <text x="60" y="594" font-size="13" fill="#646566">点击查看详情，建议咨询医生</text>
+  <!-- 检查按钮 -->
+  <rect x="120" y="640" width="300" height="56" rx="28" fill="#1989fa"/>
+  <text x="270" y="676" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">🔍 检查相互作用</text>
+  <!-- 底部 Tab -->
+  <rect y="888" width="540" height="72" fill="#ffffff"/>
+  <text x="68" y="924" font-size="12" fill="#1989fa" text-anchor="middle">📋 首页</text>
+  <text x="202" y="924" font-size="12" fill="#646566" text-anchor="middle">📷 拍照</text>
+  <text x="338" y="924" font-size="12" fill="#646566" text-anchor="middle">⏰ 提醒</text>
+  <text x="472" y="924" font-size="12" fill="#646566" text-anchor="middle">🎙️ 问答</text>
+  <line x1="0" y1="888" x2="540" y2="888" stroke="#ebedf0" stroke-width="1"/>
+</svg>
