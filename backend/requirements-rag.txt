@@ -1,0 +1,5 @@
+# 阶段 4 RAG 依赖：ChromaDB 向量库 + 中文 Embedding
+chromadb==0.5.18
+sentence-transformers==3.2.1
+# pypdf 用于读取国家药监局公开 PDF
+pypdf==5.1.0

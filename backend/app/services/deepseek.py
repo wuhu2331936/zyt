@@ -91,14 +91,55 @@ async def chat(
     return response.choices[0].message.content or ""
 
 
+def _safe_json_loads(text: str) -> dict:
+    """从模型输出里稳健抠出 JSON（容忍 ```json 围栏）"""
+    import json
+    text = text.strip()
+    if text.startswith("```"):
+        lines = text.splitlines()
+        text = "\n".join(line for line in lines if not line.strip().startswith("```"))
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    start, end = text.find("{"), text.rfind("}")
+    if start != -1 and end != -1 and end > start:
+        try:
+            return json.loads(text[start : end + 1])
+        except json.JSONDecodeError:
+            pass
+    return {}
+
+
+async def _complete_json(
+    system: str,
+    user: str,
+    temperature: float = 0.2,
+    max_tokens: int = 1200,
+) -> dict:
+    """通用 JSON 模式调用：返回 dict（自动剥离 markdown 围栏）"""
+    client = _get_client()
+    response = await client.chat.completions.create(
+        model=settings.deepseek_model,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        temperature=temperature,
+        max_tokens=max_tokens,
+        response_format={"type": "json_object"},
+    )
+    text = response.choices[0].message.content or "{}"
+    parsed = _safe_json_loads(text)
+    return parsed or {"has_risk": False, "risks": [], "summary": "模型返回解析失败"}
+
+
 async def analyze_interactions(medicines: list[str]) -> dict:
     """让 DeepSeek 直接分析药品相互作用（阶段 2 简化方案）
 
     阶段 4 会替换为 ChromaDB RAG 检索 + LLM 总结的更精准方案。
     这里先用 LLM 的内置知识做兜底，确保阶段 2 可跑通。
     """
-    client = _get_client()
-
     prompt = f"""请分析以下药物组合之间是否存在相互作用风险，并按以下 **严格 JSON 格式** 返回（不要任何多余文字、不要 markdown 代码块）：
 
 药品列表：{chr(10).join(f"- {m}" for m in medicines)}
@@ -119,25 +160,9 @@ JSON Schema:
 }}
 
 若不存在明显相互作用，has_risk 设为 false，risks 为空数组。"""
-
-    response = await client.chat.completions.create(
-        model=settings.deepseek_model,
-        messages=[
-            {
-                "role": "system",
-                "content": "你是资深药师，擅长分析药物相互作用。请严格按照 JSON 格式输出。",
-            },
-            {"role": "user", "content": prompt},
-        ],
+    return await _complete_json(
+        system="你是资深药师，擅长分析药物相互作用。请严格按照 JSON 格式输出。",
+        user=prompt,
         temperature=0.1,
         max_tokens=1000,
-        response_format={"type": "json_object"},
     )
-
-    import json
-
-    text = response.choices[0].message.content or "{}"
-    try:
-        return json.loads(text)
-    except json.JSONDecodeError:
-        return {"has_risk": False, "risks": [], "summary": "解析失败，请稍后再试"}
