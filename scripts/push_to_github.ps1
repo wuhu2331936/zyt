@@ -1,88 +1,118 @@
-# 智药通 - 一键推送到 GitHub / Gitee
-# 路径：scripts\push_to_github.ps1
-# 用法：在 zhijiayaotong/ 根目录右键 → 用 PowerShell 运行
+﻿# ZhiYaoTong - One-click push to GitHub / Gitee
+# Path: scripts\push_to_github.ps1
+# Usage: double-click scripts\push_to_github.bat (recommended)
+#         OR right-click this .ps1 -> Run with PowerShell
+#
+# IMPORTANT: Do NOT add Chinese comments above a `$var = '...'` line.
+# Windows PowerShell 5.1 has a parser bug where a UTF-8 comment with
+# certain symbol sequences silently swallows the next variable assignment.
+# All inline notes below are English-only.
 
 $ErrorActionPreference = "Stop"
-Set-Location (Resolve-Path "$PSScriptRoot\..\zhijiayaotong")
+
+# Auto-detect common Git install paths (PowerShell does NOT inherit Git Bash PATH)
+$gitCandidates = @(
+    'C:\Program Files\Git\bin',
+    'C:\Program Files\Git\cmd',
+    'C:\Program Files (x86)\Git\bin',
+    "$env:LOCALAPPDATA\Programs\Git\bin",
+    'C:\Users\wuhu\.workbuddy\binaries\PortableGit\versions\1.2.0\mingw64\bin'
+)
+foreach ($p in $gitCandidates) {
+    if ((Test-Path (Join-Path $p 'git.exe')) -and ($env:Path -notlike "*$p*")) {
+        $env:Path = "$p;$env:Path"
+    }
+}
+
+$projectRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+Set-Location $projectRoot
 
 Clear-Host
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  智药通 - 推送到 GitHub / Gitee" -ForegroundColor Cyan
+Write-Host "  ZhiYaoTong - Push to GitHub / Gitee" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
-# 前置检查
-$branch = git rev-parse --abbrev-ref HEAD
-$commitCount = (git log --oneline | Measure-Object).Count
-$tag = git tag --points-at HEAD
-Write-Host "[OK] 当前分支: $branch  提交数: $commitCount  当前 tag: $($tag -join ', ')" -ForegroundColor Green
+try {
+    $branch = git rev-parse --abbrev-ref HEAD
+    $commitCount = (git log --oneline | Measure-Object).Count
+    $tag = git tag --points-at HEAD
+    Write-Host "[OK] branch: $branch  commits: $commitCount  tag: $($tag -join ', ')" -ForegroundColor Green
+} catch {
+    Write-Host "[FATAL] git not available or not in a git repo" -ForegroundColor Red
+    Write-Host "  Error: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "Please confirm:" -ForegroundColor Yellow
+    Write-Host "  1. Git for Windows is installed"
+    Write-Host "  2. You run this from zhijiayaotong\ root (with .git folder)"
+    pause
+    exit 1
+}
 Write-Host ""
 
-# --- 路径 1: 优先用 GitHub CLI（gh）---
+# Path 1: GitHub CLI (gh)
 $gh = Get-Command gh -ErrorAction SilentlyContinue
 if ($gh) {
-    Write-Host "[检测] 发现 GitHub CLI (gh): $($gh.Version)" -ForegroundColor Yellow
-    $authStatus = gh auth status 2>&1
+    Write-Host "[detect] GitHub CLI (gh): $($gh.Version)" -ForegroundColor Yellow
+    $authOutput = gh auth status 2>&1 | Out-String
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "未登录。先执行：gh auth login  （按提示走完）" -ForegroundColor Red
+        Write-Host "Not logged in. Run first: gh auth login" -ForegroundColor Red
+        pause
         exit 1
     }
-    Write-Host "[OK] gh 已登录" -ForegroundColor Green
+    Write-Host "[OK] gh logged in" -ForegroundColor Green
 
-    $repoName = Read-Host "仓库名 (默认: zhiyaotong)"
+    $repoName = Read-Host "Repo name (default: zhiyaotong)"
     if ([string]::IsNullOrWhiteSpace($repoName)) { $repoName = "zhiyaotong" }
-    $visibility = Read-Host "可见性 [public/private] (默认: public)"
+    $visibility = Read-Host "Visibility [public/private] (default: public)"
     if ([string]::IsNullOrWhiteSpace($visibility)) { $visibility = "public" }
-    $desc = "智药通 - AI 老年人用药安全助手 (传智杯 AI 创新应用挑战赛)"
+    $desc = "ZhiYaoTong - AI elderly medication safety assistant"
 
-    # 已存在则只 push；不存在则 create + push
-    $remote = git remote get-url origin 2>$null
+    $remote = git remote get-url origin 2> $null
     if ($remote) {
         git push -u origin $branch
-        git push origin $tag
+        if ($tag) { git push origin $tag }
     } else {
         gh repo create $repoName --$visibility --source=. --remote=origin --description $desc
     }
     Write-Host ""
     Write-Host "========================================" -ForegroundColor Green
-    Write-Host "  ✅ 推送完成" -ForegroundColor Green
-    Write-Host "  仓库地址: $remote" -ForegroundColor Green
+    Write-Host "  Push complete" -ForegroundColor Green
+    Write-Host "  Repo URL: $remote" -ForegroundColor Green
     Write-Host "========================================" -ForegroundColor Green
+    pause
     exit 0
 }
 
-# --- 路径 2: HTTPS + Personal Access Token（通用）---
-Write-Host "[未检测到 gh CLI] 使用 HTTPS + Token 方式" -ForegroundColor Yellow
+# Path 2: HTTPS + Personal Access Token
+Write-Host "[no gh CLI] Falling back to HTTPS + Token" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "首次使用需要：" -ForegroundColor Cyan
-Write-Host "  1. 在 GitHub/Gitee 网页上创建一个**空仓库**（不要勾选 README/.gitignore）"
-Write-Host "  2. 生成 Personal Access Token（PAT）："
-Write-Host "     - GitHub: https://github.com/settings/tokens  (勾选 repo 权限)"
+Write-Host "Prerequisites:" -ForegroundColor Cyan
+Write-Host "  1. Create an empty repo on the web (do NOT tick README/.gitignore)"
+Write-Host "  2. Generate a Personal Access Token (PAT):"
+Write-Host "     - GitHub: https://github.com/settings/tokens  (scope: repo)"
 Write-Host "     - Gitee:  https://gitee.com/profile/personal_access_tokens"
 Write-Host ""
 
-$choice = Read-Host "选择平台 [1=GitHub / 2=Gitee] (默认: 1)"
+$choice = Read-Host "Platform [1=GitHub / 2=Gitee] (default: 1)"
 if ($choice -eq "2") { $defaultHost = "gitee.com" } else { $defaultHost = "github.com" }
 
-$user = Read-Host "你的用户名"
-$repoName = Read-Host "仓库名 (默认: zhiyaotong)"
+$user = Read-Host "Your username"
+$repoName = Read-Host "Repo name (default: zhiyaotong)"
 if ([string]::IsNullOrWhiteSpace($repoName)) { $repoName = "zhiyaotong" }
 
 $url = "https://$defaultHost/$user/$repoName.git"
-$confirmed = Read-Host "确认推送到 $url ? [y/n]"
-if ($confirmed -ne "y") { Write-Host "已取消"; exit 0 }
+$confirmed = Read-Host "Push to $url ? [y/n]"
+if ($confirmed -ne "y") { Write-Host "Cancelled"; pause; exit 0 }
 
-# 配 remote + push
-git remote remove origin 2>$null
+git remote remove origin 2> $null
 git remote add origin $url
-git remote set-url origin $url  # 显式写一次，防止 Bash 路径转换
 
-# 第一次 push 会要求输入 username + token（PAT 当密码粘贴）
 Write-Host ""
-Write-Host "即将执行：git push -u origin $branch" -ForegroundColor Cyan
+Write-Host "Running: git push -u origin $branch" -ForegroundColor Cyan
 Write-Host "  username: $user" -ForegroundColor Gray
-Write-Host "  password: **粘贴你的 PAT (GitHub Token 或 Gitee 私人令牌)**" -ForegroundColor Gray
-Write-Host "  （密码输入时光标不会动，粘贴后回车即可）" -ForegroundColor DarkGray
+Write-Host "  password: paste your PAT (GitHub Token / Gitee private token)" -ForegroundColor Gray
+Write-Host "  (cursor won't move while typing password, just paste + Enter)" -ForegroundColor DarkGray
 Write-Host ""
 git push -u origin $branch
 if ($LASTEXITCODE -eq 0 -and $tag) {
@@ -91,7 +121,8 @@ if ($LASTEXITCODE -eq 0 -and $tag) {
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
-Write-Host "  ✅ 推送完成" -ForegroundColor Green
-Write-Host "  仓库地址: https://$defaultHost/$user/$repoName" -ForegroundColor Green
-Write-Host "  下一步：去网页确认 Public 状态 + 在 Settings → Public 开启" -ForegroundColor Green
+Write-Host "  Push complete" -ForegroundColor Green
+Write-Host "  Repo URL: https://$defaultHost/$user/$repoName" -ForegroundColor Green
+Write-Host "  Next: confirm Public status on the web" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
+pause
