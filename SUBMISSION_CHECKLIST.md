@@ -8,17 +8,9 @@
 
 | 要求 | 状态 | 位置 / 操作 |
 |---|---|---|
-| 托管平台 GitHub/Gitee，Public 或提供访问权限 | ⏳ | **创建空仓库后执行下方推送命令** |
-| 完整、细粒度 Git 提交历史（禁止一次性 initial commit 含全部功能） | ✅ | 22 次提交，6 阶段演进，`git log --oneline` 可核验；`git bundle` 备份已随包提供 |
+| 托管平台 GitHub/Gitee，Public 或提供访问权限 | ⏳ | **双击 `scripts\push_to_github.bat`**（自动检测 gh CLI，否则走 PAT 方式，全程中文引导） |
+| 完整、细粒度 Git 提交历史（禁止一次性 initial commit 含全部功能） | ✅ | 23 次提交，6 阶段演进，`git log --oneline` 可核验；`git bundle` 备份已随包提供 |
 | AI 对话历史导出的 Prompt 快照（≥3 个核心功能完整 Prompt 链，含提问→AI建议→修 Bug 过程） | ✅ | `docs/ai-prompts/AI-COLLABORATION-LOG.md`（3 条完整链）+ `vl-recognition.md` / `rag-interaction.md` / `voice-qa.md`（单点提示词设计） |
-
-**推送命令**（创建 GitHub 空仓库后，在 `zhijiayaotong/` 目录执行）：
-
-```bash
-git remote add origin https://github.com/<你的用户名>/zhiyaotong.git
-git push -u origin main
-git push origin v0.3.0
-```
 
 ## 2.2 复现性声明与重现指南（README.md）
 
@@ -28,6 +20,8 @@ git push origin v0.3.0
 | 完整环境配置说明 | ✅ | `README.md` + `backend/.env.example`（全部变量含注释） |
 | 依赖清单 | ✅ | `frontend/package.json` + `backend/requirements.txt`（锁定小版本） |
 | 环境变量模板 | ✅ | `frontend/.env.example` + `backend/.env.example` |
+
+> **API Key 申请** → 双击 `scripts\setup_api_keys.bat`（自动复制 .env + 打开记事本 + 填完自动校验）
 
 ## 2.3 演示视频与技术文档
 
@@ -41,9 +35,9 @@ git push origin v0.3.0
 
 ## 提交前最后 Checklist
 
-- [ ] GitHub 仓库创建并推送（上方命令），确认 Public 可匿名访问
+- [ ] **双击 `scripts\push_to_github.bat`** → 推送仓库到 GitHub/Gitee 并设 Public
+- [ ] **双击 `scripts\setup_api_keys.bat`** → 申请 2 个 Key 并填入 `backend\.env`（脚本会自动确认 .env 未被提交）
 - [ ] `README.md` 顶部回填仓库地址 / 演示地址 / 视频链接占位
-- [ ] `backend/.env` 填真实 Key（**确认 `.env` 未被提交**：`git status` 应无 .env）
 - [ ] 部署上线（Vercel + Render，见 `DEPLOY.md`），演示视频用线上地址更有说服力
 - [ ] 录制演示视频（脚本第八幕前完成），输出 MP4 1080p
 - [ ] 核对视频时长 5-8 分钟、AI 协同片段 ≥2 分钟
