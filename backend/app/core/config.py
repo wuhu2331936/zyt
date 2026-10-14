@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     app_port: int = 8000
     app_debug: bool = True
 
+    # ====== CORS：前端地址（生产环境填 Vercel/Netlify 给的域名）======
+    # 多个用英文逗号分隔；填 * 表示全部允许（仅开发）
+    frontend_url: str = "http://localhost:5173,http://127.0.0.1:5173"
+
     # ====== 向量库 ======
     chroma_persist_dir: str = str(BACKEND_DIR / "app" / "data" / "chroma")
     embedding_model: str = "BAAI/bge-small-zh"

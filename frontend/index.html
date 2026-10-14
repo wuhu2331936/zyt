@@ -2,10 +2,20 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/pwa-icons/icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#1989fa" />
-    <title>智药通</title>
+
+    <!-- PWA meta（iOS 添加到主屏幕支持） -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="智药通" />
+    <link rel="apple-touch-icon" href="/pwa-icons/pwa-192x192.png" />
+
+    <!-- PWA manifest（vite-plugin-pwa 会自动 copy + 生成带哈希的 sw.js） -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <title>智药通 - AI 老年人用药安全助手</title>
   </head>
   <body>
     <div id="app"></div>

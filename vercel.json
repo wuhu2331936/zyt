@@ -1,0 +1,27 @@
+# Vercel 部署前端
+# 用法：vercel.com 选 "Import Project" → 选本仓库 → Framework Preset 选 "Vite"
+# 或 vercel CLI: vercel --prod
+
+# 构建输出目录
+output: dist
+
+# 进入 frontend 子目录构建
+buildCommand: cd frontend && npm install && npm run build
+
+# SPA 路由刷新 404 处理（Vite 默认 dist 已是 SPA）
+routes:
+  - src: /pwa-icons/(.*)
+    headers:
+      Cache-Control: public, max-age=31536000, immutable
+  - src: /assets/(.*)
+    headers:
+      Cache-Control: public, max-age=31536000, immutable
+  - src: /manifest.webmanifest
+    headers:
+      Content-Type: application/manifest+json
+      Cache-Control: public, max-age=604800
+  # SPA fallback：所有未匹配的请求返回 index.html
+  - src: /.*\.(js|css|svg|png|jpg|jpeg|gif|webp|webmanifest|ico|woff2?)
+    dest: frontend/dist/$1
+  - src: /.*\.svg
+    dest: frontend/dist/$1

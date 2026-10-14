@@ -1,0 +1,25 @@
+{
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "cd backend && pip install -r requirements.txt && echo 'skip vector db build (will be lazy on first request)'"
+  },
+  "deploy": {
+    "startCommand": "cd backend && bash start.sh",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10,
+    "healthcheckPath": "/api/health",
+    "healthcheckTimeout": 30,
+    "healthcheckInterval": 60,
+    "numReplicas": 1
+  },
+  "env": {
+    "PYTHONUNBUFFERED": "1",
+    "DASHSCOPE_BASE_URL": "https://dashscope.aliyuncs.com/api/v1",
+    "DEEPSEEK_BASE_URL": "https://api.deepseek.com",
+    "DEEPSEEK_MODEL": "deepseek-chat",
+    "QWEN_VL_MODEL": "qwen-vl-plus",
+    "EMBEDDING_MODEL": "BAAI/bge-small-zh",
+    "EDGE_TTS_VOICE": "zh-CN-XiaoxiaoNeural",
+    "APP_DEBUG": "false"
+  }
+}

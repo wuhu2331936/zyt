@@ -1,0 +1,44 @@
+# Netlify 部署前端
+# 用法：netlify.com → Add new site → Import from Git → 选本仓库
+#   Build command: cd frontend && npm run build
+#   Publish directory: frontend/dist
+
+[build]
+  base = "frontend"
+  publish = "dist"
+  command = "npm install && npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # 把后端地址注入；Netlify 也可在 Site settings → Build & deploy → Environment 改
+  VITE_API_BASE_URL = "https://zhijiayaotong-api.onrender.com/api"
+
+# SPA fallback + PWA 缓存
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# PWA 静态资源要长缓存（带哈希的 asset 文件）
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/pwa-icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# manifest 必须返回正确 MIME
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
+# service worker 不能缓存（更新需要立即拉新）
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Service-Worker-Allowed = "/"

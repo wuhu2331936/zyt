@@ -1,0 +1,47 @@
+# =============================================================================
+# Render 部署配置（blueprint 模式）
+# 用途：render.com 账号 → New → Blueprint → 选本仓库 → 自动识别此文件
+# =============================================================================
+
+services:
+  - type: web
+    name: zhijiayaotong-api
+    runtime: docker
+    rootDir: backend
+    plan: starter             # 免费版可用 starter（$7/月，512MB RAM）
+                              # 个人赛评奖阶段可临时升级到 standard（2GB）
+    healthCheckPath: /api/health
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      # ===== 必填：申请后填入 =====
+      - key: DASHSCOPE_API_KEY
+        sync: false            # 标记为敏感（不显示值）
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      # ===== 可选（已有默认值）=====
+      - key: DASHSCOPE_BASE_URL
+        value: https://dashscope.aliyuncs.com/api/v1
+      - key: DEEPSEEK_BASE_URL
+        value: https://api.deepseek.com
+      - key: DEEPSEEK_MODEL
+        value: deepseek-chat
+      - key: QWEN_VL_MODEL
+        value: qwen-vl-plus
+      - key: EMBEDDING_MODEL
+        value: BAAI/bge-small-zh
+      - key: CHROMA_PERSIST_DIR
+        value: ./app/data/chroma
+      - key: APP_DEBUG
+        value: false
+      - key: EDGE_TTS_VOICE
+        value: zh-CN-XiaoxiaoNeural
+
+    # 把 ChromaDB 数据持久化（避免每次部署重建）
+    disk:
+      name: chroma-data
+      mountPath: /app/app/data/chroma
+      sizeGB: 1
