@@ -1,0 +1,55 @@
+# ====== Python ======
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# 虚拟环境
+venv/
+env/
+.venv/
+
+# 环境变量（绝对不要提交真实 Key）
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ====== Node ======
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# ====== IDE / 系统 ======
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ====== 日志 ======
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ====== 临时 / 缓存 ======
+*.tmp
+.cache/
+
+# ====== 数据 / 模型 ======
+backend/app/data/chroma/
+backend/uploads/
+
+# 敏感文件
+*.pem
+*.key
