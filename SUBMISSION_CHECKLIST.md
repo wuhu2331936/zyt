@@ -8,8 +8,8 @@
 
 | 要求 | 状态 | 位置 / 操作 |
 |---|---|---|
-| 托管平台 GitHub/Gitee，Public 或提供访问权限 | ⏳ | **双击 `scripts\push_to_github.bat`**（自动检测 gh CLI，否则走 PAT 方式，全程中文引导） |
-| 完整、细粒度 Git 提交历史（禁止一次性 initial commit 含全部功能） | ✅ | 23 次提交，6 阶段演进，`git log --oneline` 可核验；`git bundle` 备份已随包提供 |
+| 托管平台 GitHub/Gitee，Public 或提供访问权限 | ⏳ | **双击 `scripts\push_to_github.bat`**（自动检测 gh CLI，否则走 PAT 方式，全程中文引导）<br>→ 详细图文步骤见 `docs/PUSH_TO_REMOTE_GUIDE.md` |
+| 完整、细粒度 Git 提交历史（禁止一次性 initial commit 含全部功能） | ✅ | 25 次提交，6 阶段演进，`git log --oneline` 可核验；`git bundle` 备份已随包提供 |
 | AI 对话历史导出的 Prompt 快照（≥3 个核心功能完整 Prompt 链，含提问→AI建议→修 Bug 过程） | ✅ | `docs/ai-prompts/AI-COLLABORATION-LOG.md`（3 条完整链）+ `vl-recognition.md` / `rag-interaction.md` / `voice-qa.md`（单点提示词设计） |
 
 ## 2.2 复现性声明与重现指南（README.md）
