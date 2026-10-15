@@ -108,21 +108,46 @@ if ($confirmed -ne "y") { Write-Host "Cancelled"; pause; exit 0 }
 git remote remove origin 2> $null
 git remote add origin $url
 
+# TLS fallback: some networks block CRL/OCSP so schannel fails with
+# CRYPT_E_NO_REVOCATION_CHECK. Retry once with the openssl backend and
+# the CA bundle shipped with Git for Windows.
+$execPath = (git --exec-path).Trim()
+$caBundle = Join-Path (Split-Path (Split-Path $execPath -Parent) -Parent) "etc\ssl\certs\ca-bundle.crt"
+
 Write-Host ""
 Write-Host "Running: git push -u origin $branch" -ForegroundColor Cyan
 Write-Host "  username: $user" -ForegroundColor Gray
-Write-Host "  password: paste your PAT (GitHub Token / Gitee private token)" -ForegroundColor Gray
-Write-Host "  (cursor won't move while typing password, just paste + Enter)" -ForegroundColor DarkGray
+Write-Host "  auth: a browser window may pop up - sign in there, that IS the login" -ForegroundColor Gray
+Write-Host "  (no PAT needed if the browser auth window appears)" -ForegroundColor DarkGray
 Write-Host ""
 git push -u origin $branch
-if ($LASTEXITCODE -eq 0) {
-    if ($tag) { git push origin $tag } else { git push origin --tags }
+$pushOk = ($LASTEXITCODE -eq 0)
+
+if (-not $pushOk) {
+    Write-Host ""
+    Write-Host "[retry] push failed, retrying with openssl TLS backend..." -ForegroundColor Yellow
+    $retryArgs = @('-c', 'http.sslBackend=openssl')
+    if (Test-Path $caBundle) { $retryArgs += @('-c', "http.sslCAInfo=$caBundle") }
+    git @retryArgs push -u origin $branch
+    $pushOk = ($LASTEXITCODE -eq 0)
 }
 
-Write-Host ""
-Write-Host "========================================" -ForegroundColor Green
-Write-Host "  Push complete" -ForegroundColor Green
-Write-Host "  Repo URL: https://$defaultHost/$user/$repoName" -ForegroundColor Green
-Write-Host "  Next: confirm Public status on the web" -ForegroundColor Green
-Write-Host "========================================" -ForegroundColor Green
+if ($pushOk) {
+    if ($tag) { git push origin $tag } else { git push origin --tags }
+    Write-Host ""
+    Write-Host "========================================" -ForegroundColor Green
+    Write-Host "  Push complete" -ForegroundColor Green
+    Write-Host "  Repo URL: https://$defaultHost/$user/$repoName" -ForegroundColor Green
+    Write-Host "  Next: confirm Public status on the web" -ForegroundColor Green
+    Write-Host "========================================" -ForegroundColor Green
+} else {
+    Write-Host ""
+    Write-Host "========================================" -ForegroundColor Red
+    Write-Host "  Push FAILED - read the error above" -ForegroundColor Red
+    Write-Host "========================================" -ForegroundColor Red
+    Write-Host "Manual fix, run in Git Bash at the project root:" -ForegroundColor Yellow
+    Write-Host "  git config --global http.schannelCheckRevoke false" -ForegroundColor Yellow
+    Write-Host "  git push -u origin main" -ForegroundColor Yellow
+    Write-Host "  git push origin v0.3.0" -ForegroundColor Yellow
+}
 pause
