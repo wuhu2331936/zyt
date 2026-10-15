@@ -69,7 +69,7 @@ cat .gitignore | grep env
 
 **GitHub**：
 1. 打开 https://github.com/new
-2. Repository name 填 `zhiyaotong`
+2. Repository name 填 `zyt`
 3. 选 **Public**
 4. **重要**：下面三个都**不要勾选**
    - ❌ Add a README file
@@ -80,7 +80,7 @@ cat .gitignore | grep env
 
 **Gitee**（备选/国内更快）：
 1. 打开 https://gitee.com/projects/new
-2. 仓库名称填 `zhiyaotong`
+2. 仓库名称填 `zyt`
 3. 选 **公开**（=Public）
 4. **不要勾选**「使用 Readme 文件初始化这个仓库」
 5. 点 **创建**
@@ -92,7 +92,7 @@ cat .gitignore | grep env
 **GitHub**：
 1. 打开 https://github.com/settings/tokens
 2. 点 **Generate new token** → **Generate new token (classic)**
-3. Note 填 `zhiyaotong-push`
+3. Note 填 `zyt-push`
 4. Expiration 选 `90 days`（或 No expiration）
 5. 勾选 **`repo`**（完整仓库读写权限，push 必需）
 6. 拉到底点 **Generate token**
@@ -129,8 +129,8 @@ Prerequisites:
 
 Platform [1=GitHub / 2=Gitee] (default: 1):     ← 直接回车(默认GitHub)，或输 2 选 Gitee
 Your username:                                     ← 输入你的 GitHub/Gitee 用户名
-Repo name (default: zhiyaotong):                  ← 直接回车用默认
-Push to https://github.com/xxx/zhiyaotong.git ? [y/n]:   ← 输 y 回车
+Repo name (default: zyt):                  ← 直接回车用默认
+Push to https://github.com/xxx/zyt.git ? [y/n]:   ← 输 y 回车
 
   username: xxx
   password: 粘贴你的 PAT
@@ -144,7 +144,7 @@ Push to https://github.com/xxx/zhiyaotong.git ? [y/n]:   ← 输 y 回车
 ```
 ========================================
   Push complete
-  Repo URL: https://github.com/xxx/zhiyaotong
+  Repo URL: https://github.com/xxx/zyt
   Next: confirm Public status on the web
 ========================================
 Press any key to continue . . .
@@ -168,7 +168,7 @@ Press any key to continue . . .
 
 ```bash
 USER_NAME="YOUR_USERNAME"
-REPO_NAME="zhiyaotong"
+REPO_NAME="zyt"
 ```
 
 **GitHub 用户执行这几行：**
@@ -231,7 +231,7 @@ git push -u origin master
 
 ```bash
 gh auth login          # 按提示登录一次
-gh repo create zhiyaotong --public --source=. --remote=origin --push
+gh repo create zyt --public --source=. --remote=origin --push
 ```
 
 一行搞定，会自动建 Public 仓库并推送。
@@ -244,7 +244,7 @@ gh repo create zhiyaotong --public --source=. --remote=origin --push
 
 ### GitHub
 
-1. 打开 `https://github.com/YOUR_USERNAME/zhiyaotong`
+1. 打开 `https://github.com/YOUR_USERNAME/zyt`
 2. 看仓库名右边有没有一个 **「Public」** 灰色标签
    - ✅ 有 → 完成
    - ❌ 显示 Private → 按下面操作
@@ -255,14 +255,14 @@ gh repo create zhiyaotong --public --source=. --remote=origin --push
 2. 拉到最底部 **Danger Zone**
 3. 点 **Change repository visibility**
 4. 选 **Change visibility** → **Make public**
-5. 输入仓库名 `zhiyaotong` 确认
+5. 输入仓库名 `zyt` 确认
 6. 点 **I understand, change repository visibility**
 
 > 注意：GitHub 从 2023 年起，把仓库从 Private 转 Public **不需要**在 Settings 里单独开启，改完即生效。
 
 ### Gitee
 
-1. 打开 `https://gitee.com/YOUR_USERNAME/zhiyaotong`
+1. 打开 `https://gitee.com/YOUR_USERNAME/zyt`
 2. 看仓库名上方有没有 **「公开」** 标签
    - ✅ 有 → 完成
    - ❌ 显示「私有」→ 按下面操作
@@ -313,7 +313,7 @@ git ls-remote origin 2>/dev/null >/dev/null && \
 推送成功后，把仓库地址填回去：
 
 1. 打开 `SUBMISSION_CHECKLIST.md`
-2. 找到「仓库地址」那一行，填入 `https://github.com/YOUR_USERNAME/zhiyaotong`
+2. 找到「仓库地址」那一行，填入 `https://github.com/YOUR_USERNAME/zyt`
 3. 同样更新 `README.md` 里的仓库链接
 4. 重新打包 zip：
 
@@ -322,7 +322,7 @@ cd C:/Users/wuhu/WorkBuddy/2026-10-14-20-41-43
 python -c "
 import zipfile, os, pathlib
 ROOT = pathlib.Path(r'C:\Users\wuhu\WorkBuddy\2026-10-14-20-41-43\zhijiayaotong')
-OUT = pathlib.Path(r'C:\Users\wuhu\WorkBuddy\2026-10-14-20-41-43\zhiyaotong-submission.zip')
+OUT = pathlib.Path(r'C:\Users\wuhu\WorkBuddy\2026-10-14-20-41-43\zyt-submission.zip')
 EX = {'node_modules','venv','.venv','__pycache__','.git','dist','build','.vite','chroma_db','chroma','.pytest_cache'}
 n=0
 with zipfile.ZipFile(OUT,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:

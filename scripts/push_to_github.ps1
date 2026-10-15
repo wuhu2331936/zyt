@@ -62,8 +62,8 @@ if ($gh) {
     }
     Write-Host "[OK] gh logged in" -ForegroundColor Green
 
-    $repoName = Read-Host "Repo name (default: zhiyaotong)"
-    if ([string]::IsNullOrWhiteSpace($repoName)) { $repoName = "zhiyaotong" }
+    $repoName = Read-Host "Repo name (default: zyt)"
+    if ([string]::IsNullOrWhiteSpace($repoName)) { $repoName = "zyt" }
     $visibility = Read-Host "Visibility [public/private] (default: public)"
     if ([string]::IsNullOrWhiteSpace($visibility)) { $visibility = "public" }
     $desc = "ZhiYaoTong - AI elderly medication safety assistant"
@@ -98,8 +98,8 @@ $choice = Read-Host "Platform [1=GitHub / 2=Gitee] (default: 1)"
 if ($choice -eq "2") { $defaultHost = "gitee.com" } else { $defaultHost = "github.com" }
 
 $user = Read-Host "Your username"
-$repoName = Read-Host "Repo name (default: zhiyaotong)"
-if ([string]::IsNullOrWhiteSpace($repoName)) { $repoName = "zhiyaotong" }
+$repoName = Read-Host "Repo name (default: zyt)"
+if ([string]::IsNullOrWhiteSpace($repoName)) { $repoName = "zyt" }
 
 $url = "https://$defaultHost/$user/$repoName.git"
 $confirmed = Read-Host "Push to $url ? [y/n]"
