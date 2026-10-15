@@ -6,18 +6,15 @@
 
 **📷 拍照识药 · ⚠️ 相互作用检查 · ⏰ 语音提醒 · 🎙️ 语音问答 · 📱 PWA 离线可用**
 
-![Vue3](https://img.shields.io/badge/Vue-3.5-42b883)
-
-![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)
-
-![PWA](https://img.shields.io/badge/PWA-vite--plugin--pwa-5A0FC8)
-
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+[![Vue3](https://img.shields.io/badge/Vue-3.5-42b883)](https://vuejs.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)](https://fastapi.tiangolo.com)
+[![PWA](https://img.shields.io/badge/PWA-vite--plugin--pwa-5A0FC8)](https://vite-pwa-org.netlify.app)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 </div>
 
-> **传智杯 AI 创新应用挑战赛参赛作品（个人赛）**  
-> 一款专为老年人设计的 AI 用药安全 H5/PWA 应用  
+> **传智杯 AI 创新应用挑战赛参赛作品（个人赛）**
+> 一款专为老年人设计的 AI 用药安全 H5/PWA 应用
 > 核心解决"看不懂药盒说明"、"记不住服药时间"、"不知药物能不能一起吃"三大痛点
 
 ---
@@ -49,15 +46,15 @@
 
 ## ✨ 核心功能
 
-| #   | 功能         | 描述                                 | AI 模型                  |
-| --- | ---------- | ---------------------------------- | ---------------------- |
-| 📷  | **拍照识药**   | 上传/拍摄药盒照片 → 2-5 秒返回药品名、规格、用法用量     | 阿里云百炼 **通义千问 VL**      |
-| ⚠️  | **相互作用检查** | 选 2+ 药品 → RAG 检索说明书 → 4 级风险提示 + 建议 | DeepSeek + ChromaDB    |
-| ⏰   | **服药提醒**   | 设置每日提醒时间，到点震动 + Edge-TTS 语音播报      | Edge-TTS（Microsoft 免费） |
-| 🎙️ | **语音问答**   | 按住说话 → ASR 转文字 → 大模型问答 → TTS 播报    | DeepSeek + Edge-TTS    |
-| 📱  | **PWA 离线** | 可添加到主屏；断网仍能看清单、检查已加载的药品            | Workbox Service Worker |
-| 💊  | **用药清单**   | localStorage 持久化的今日/全部药品管理         | -                      |
-| 🔍  | **相互作用弹窗** | 首页一键检查清单中所有药品的相互作用                 | DeepSeek               |
+| # | 功能 | 描述 | AI 模型 |
+|---|---|---|---|
+| 📷 | **拍照识药** | 上传/拍摄药盒照片 → 2-5 秒返回药品名、规格、用法用量 | 阿里云百炼 **通义千问 VL** |
+| ⚠️ | **相互作用检查** | 选 2+ 药品 → RAG 检索说明书 → 4 级风险提示 + 建议 | DeepSeek + ChromaDB |
+| ⏰ | **服药提醒** | 设置每日提醒时间，到点震动 + Edge-TTS 语音播报 | Edge-TTS（Microsoft 免费） |
+| 🎙️ | **语音问答** | 按住说话 → ASR 转文字 → 大模型问答 → TTS 播报 | DeepSeek + Edge-TTS |
+| 📱 | **PWA 离线** | 可添加到主屏；断网仍能看清单、检查已加载的药品 | Workbox Service Worker |
+| 💊 | **用药清单** | localStorage 持久化的今日/全部药品管理 | - |
+| 🔍 | **相互作用弹窗** | 首页一键检查清单中所有药品的相互作用 | DeepSeek |
 
 ## 🖼️ 功能演示
 
@@ -71,7 +68,7 @@
 
 ### 拍照识药 — 拍照 / 上传 / 识别 / 入库
 
-> 📸 [scan-upload.png](docs/screenshots/scan-upload.png) · 拍照或相册选择  
+> 📸 [scan-upload.png](docs/screenshots/scan-upload.png) · 拍照或相册选择
 > 📸 [scan-result.png](docs/screenshots/scan-result.png) · VL 返回的药品详情卡
 >
 > 流程：选图 → 2-5s 展示「📦 氨氯地平片 5mg 用法: 每日 1 次 1 片 饭后」→ 可选「加入我的清单」或「再拍一张」。
@@ -80,24 +77,22 @@
 
 > 📸 [interaction.png](docs/screenshots/interaction.png) · 风险卡片
 >
-> 4 级色标：🔴 严禁（critical）· 🟠 较严重（major）· 🟡 中等（moderate）· 🟢 轻微（minor）。  
+> 4 级色标：🔴 严禁（critical）· 🟠 较严重（major）· 🟡 中等（moderate）· 🟢 轻微（minor）。
 > 老年用户视觉特征 → 高对比配色 + 大字号 + 友好语句。
 
 ### 语音问答 — 按住说话 + 自动播报
 
-> 📸 [voice-qa.png](docs/screenshots/voice-qa.png) · 对话界面  
+> 📸 [voice-qa.png](docs/screenshots/voice-qa.png) · 对话界面
 > 📸 [voice-button.png](docs/screenshots/voice-button.png) · 按住说话按钮
 >
 > 体验：用户按住底部话筒 → 说话 → 松开 → 后端流式返回 → 文字 + TTS 同步播报。
 
 ### PWA 安装 — 桌面/主屏
 
-> 📸 [pwa-install.png](docs/screenshots/pwa-install.png) · Chrome 安装提示  
+> 📸 [pwa-install.png](docs/screenshots/pwa-install.png) · Chrome 安装提示
 > 📸 [pwa-homescreen.png](docs/screenshots/pwa-homescreen.png) · iOS 主屏图标
 >
 > 安装后应用独立窗口运行，可离线使用清单功能。
-
-
 
 ---
 
@@ -139,39 +134,39 @@
 
 ### 前端（`frontend/`）
 
-| 技术                  | 版本   | 用途                             |
-| ------------------- | ---- | ------------------------------ |
-| Vue                 | 3.5  | 渐进式前端框架（Composition API）       |
-| Vite                | 5.4  | 构建工具 + Dev Server              |
-| Vue Router          | 4.4  | SPA 路由（懒加载）                    |
-| Pinia               | 2.2  | 状态管理（含 localStorage 持久化）       |
-| Vant                | 4.9  | 移动端 UI 组件库（按需引入 26 个）          |
-| Axios               | 1.7  | HTTP 客户端 + 拦截器                 |
-| Day.js              | 1.11 | 时间格式化（轻量替代 moment）             |
+| 技术 | 版本 | 用途 |
+|---|---|---|
+| Vue | 3.5 | 渐进式前端框架（Composition API）|
+| Vite | 5.4 | 构建工具 + Dev Server |
+| Vue Router | 4.4 | SPA 路由（懒加载）|
+| Pinia | 2.2 | 状态管理（含 localStorage 持久化）|
+| Vant | 4.9 | 移动端 UI 组件库（按需引入 26 个）|
+| Axios | 1.7 | HTTP 客户端 + 拦截器 |
+| Day.js | 1.11 | 时间格式化（轻量替代 moment）|
 | **vite-plugin-pwa** | 0.21 | PWA / Workbox / Service Worker |
-| workbox-window      | 7.3  | SW 注册 + 更新检测                   |
+| workbox-window | 7.3 | SW 注册 + 更新检测 |
 
 ### 后端（`backend/`）
 
-| 技术                        | 版本    | 用途                             |
-| ------------------------- | ----- | ------------------------------ |
-| FastAPI                   | 0.115 | 异步 Web 框架                      |
-| Pydantic                  | 2.9   | 数据验证 + OpenAPI                 |
-| httpx                     | 0.27  | 异步 HTTP 客户端                    |
-| **DashScope**             | 1.20  | 阿里云百炼 Python SDK（通义千问 VL）      |
-| **openai**                | 1.51  | DeepSeek（兼容 OpenAI SDK）        |
-| **edge-tts**              | 6.1   | Microsoft Edge TTS（无需 API Key） |
-| **ChromaDB**              | 0.5   | 向量数据库（持久化至磁盘）                  |
-| **sentence-transformers** | 3.2   | BAAI/bge-small-zh 中文 Embedding |
-| Pillow                    | 10.4  | 图像处理                           |
+| 技术 | 版本 | 用途 |
+|---|---|---|
+| FastAPI | 0.115 | 异步 Web 框架 |
+| Pydantic | 2.9 | 数据验证 + OpenAPI |
+| httpx | 0.27 | 异步 HTTP 客户端 |
+| **DashScope** | 1.20 | 阿里云百炼 Python SDK（通义千问 VL）|
+| **openai** | 1.51 | DeepSeek（兼容 OpenAI SDK）|
+| **edge-tts** | 6.1 | Microsoft Edge TTS（无需 API Key）|
+| **ChromaDB** | 0.5 | 向量数据库（持久化至磁盘）|
+| **sentence-transformers** | 3.2 | BAAI/bge-small-zh 中文 Embedding |
+| Pillow | 10.4 | 图像处理 |
 
 ### 部署
 
-| 组件  | 平台                      | 计划                            |
-| --- | ----------------------- | ----------------------------- |
-| 前端  | **Vercel**（推荐）/ Netlify | 免费 Hobby Plan                 |
-| 后端  | **Render**（推荐）/ Railway | Starter $7/月（≥ 512MB 装 torch） |
-| 向量库 | 后端容器内 ChromaDB          | Render 持久化磁盘                  |
+| 组件 | 平台 | 计划 |
+|---|---|---|
+| 前端 | **Vercel**（推荐）/ Netlify | 免费 Hobby Plan |
+| 后端 | **Render**（推荐）/ Railway | Starter $7/月（≥ 512MB 装 torch）|
+| 向量库 | 后端容器内 ChromaDB | Render 持久化磁盘 |
 
 ---
 
@@ -220,7 +215,7 @@ python scripts/build_vector_db.py
 uvicorn app.main:app --reload --port 8000
 ```
 
-访问 <http://localhost:8000/docs> 查看 Swagger 文档。
+访问 http://localhost:8000/docs 查看 Swagger 文档。
 
 ### 3. 前端启动
 
@@ -234,7 +229,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-访问 <http://localhost:5173> ，按 F12 → 设备模拟查看移动端。
+访问 http://localhost:5173 ，按 F12 → 设备模拟查看移动端。
 
 ### 4. 体验流程
 
@@ -250,23 +245,23 @@ npm run dev
 
 ### 后端 `backend/.env`
 
-| 变量名                  | 必填 | 默认                                            | 说明                                      |
-| -------------------- | -- | --------------------------------------------- | --------------------------------------- |
-| `DASHSCOPE_API_KEY`  | ✅  | -                                             | 阿里云百炼 API Key                           |
-| `DEEPSEEK_API_KEY`   | ✅  | -                                             | DeepSeek API Key                        |
-| `DEEPSEEK_BASE_URL`  | ❌  | `https://api.deepseek.com`                    | -                                       |
-| `DEEPSEEK_MODEL`     | ❌  | `deepseek-chat`                               | -                                       |
-| `QWEN_VL_MODEL`      | ❌  | `qwen-vl-plus`                                | 推荐 `qwen-vl-max` 精度更高                   |
-| `EMBEDDING_MODEL`    | ❌  | `BAAI/bge-small-zh`                           | 首次使用会自动下载                               |
-| `CHROMA_PERSIST_DIR` | ❌  | `./app/data/chroma`                           | ChromaDB 持久化目录                          |
-| `EDGE_TTS_VOICE`     | ❌  | `zh-CN-XiaoxiaoNeural`                        | 5 种声音可选：见 `docs/ai-prompts/voice-qa.md` |
-| `FRONTEND_URL`       | ❌  | `http://localhost:5173,http://127.0.0.1:5173` | 生产环境改为 Vercel 域名（逗号分隔）                  |
+| 变量名 | 必填 | 默认 | 说明 |
+|---|---|---|---|
+| `DASHSCOPE_API_KEY` | ✅ | - | 阿里云百炼 API Key |
+| `DEEPSEEK_API_KEY` | ✅ | - | DeepSeek API Key |
+| `DEEPSEEK_BASE_URL` | ❌ | `https://api.deepseek.com` | - |
+| `DEEPSEEK_MODEL` | ❌ | `deepseek-chat` | - |
+| `QWEN_VL_MODEL` | ❌ | `qwen-vl-plus` | 推荐 `qwen-vl-max` 精度更高 |
+| `EMBEDDING_MODEL` | ❌ | `BAAI/bge-small-zh` | 首次使用会自动下载 |
+| `CHROMA_PERSIST_DIR` | ❌ | `./app/data/chroma` | ChromaDB 持久化目录 |
+| `EDGE_TTS_VOICE` | ❌ | `zh-CN-XiaoxiaoNeural` | 5 种声音可选：见 `docs/ai-prompts/voice-qa.md` |
+| `FRONTEND_URL` | ❌ | `http://localhost:5173,http://127.0.0.1:5173` | 生产环境改为 Vercel 域名（逗号分隔）|
 
 ### 前端 `frontend/.env.local`
 
-| 变量名                 | 必填 | 说明                     |
-| ------------------- | -- | ---------------------- |
-| `VITE_API_BASE_URL` | ✅  | 后端 API 完整路径（结尾 `/api`） |
+| 变量名 | 必填 | 说明 |
+|---|---|---|
+| `VITE_API_BASE_URL` | ✅ | 后端 API 完整路径（结尾 `/api`）|
 
 ---
 
@@ -347,14 +342,14 @@ zhijiayaotong/
 
 > 详见 [SCORING.md](SCORING.md)
 
-| 评分项     | 权重（估） | 本项目实现要点                                             |
-| ------- | ----- | --------------------------------------------------- |
-| 创意与定位   | 20%   | 聚焦「老年人 + 用药安全」真实痛点；4 个细分场景逐个解决                      |
-| AI 技术应用 | 30%   | 通义千问 VL（多模态）+ DeepSeek + RAG + Edge-TTS 全栈          |
-| 功能完整度   | 20%   | 4 大核心功能 + PWA 离线 + 完整的数据闭环                          |
-| 用户体验    | 15%   | Vant 大字号 / 高对比；按住说话；震动 + 语音双提醒                      |
-| 代码与文档   | 15%   | 20+ Git 提交 · 详细 README · Swagger · Prompt 快照 · 部署文档 |
-| 演示视频    | 10%   | 5-8 分钟分镜脚本（见 `docs/demo-video-script.md`）           |
+| 评分项 | 权重（估） | 本项目实现要点 |
+|---|---|---|
+| 创意与定位 | 20% | 聚焦「老年人 + 用药安全」真实痛点；4 个细分场景逐个解决 |
+| AI 技术应用 | 30% | 通义千问 VL（多模态）+ DeepSeek + RAG + Edge-TTS 全栈 |
+| 功能完整度 | 20% | 4 大核心功能 + PWA 离线 + 完整的数据闭环 |
+| 用户体验 | 15% | Vant 大字号 / 高对比；按住说话；震动 + 语音双提醒 |
+| 代码与文档 | 15% | 20+ Git 提交 · 详细 README · Swagger · Prompt 快照 · 部署文档 |
+| 演示视频 | 10% | 5-8 分钟分镜脚本（见 `docs/demo-video-script.md`）|
 
 ---
 
@@ -362,14 +357,14 @@ zhijiayaotong/
 
 > 完整分镜脚本见 [`docs/demo-video-script.md`](docs/demo-video-script.md)，含分镜号、时长、对白、字幕、画面、镜头语言。**5 分钟精华版**分镜如下：
 
-| 时间          | 内容                      | 镜头            |
-| ----------- | ----------------------- | ------------- |
-| 0:00 - 0:30 | 开场：老年用药安全的社会问题          | 调研数据 + 短视频素材  |
-| 0:30 - 1:30 | 演示场景 1：「妈妈看不懂药盒」→ 拍照识药  | 移动端录屏         |
-| 1:30 - 2:30 | 演示场景 2：「同时吃 3 种药」→ 相互作用 | 移动端录屏         |
-| 2:30 - 3:30 | 演示场景 3：「忘吃药」→ 语音提醒      | 移动端录屏 + 闹钟 UI |
-| 3:30 - 4:30 | 演示场景 4：「想问医生」→ 语音问答     | 移动端录屏         |
-| 4:30 - 5:00 | 技术亮点总结 + CTA            | 录屏 + 字幕       |
+| 时间 | 内容 | 镜头 |
+|---|---|---|
+| 0:00 - 0:30 | 开场：老年用药安全的社会问题 | 调研数据 + 短视频素材 |
+| 0:30 - 1:30 | 演示场景 1：「妈妈看不懂药盒」→ 拍照识药 | 移动端录屏 |
+| 1:30 - 2:30 | 演示场景 2：「同时吃 3 种药」→ 相互作用 | 移动端录屏 |
+| 2:30 - 3:30 | 演示场景 3：「忘吃药」→ 语音提醒 | 移动端录屏 + 闹钟 UI |
+| 3:30 - 4:30 | 演示场景 4：「想问医生」→ 语音问答 | 移动端录屏 |
+| 4:30 - 5:00 | 技术亮点总结 + CTA | 录屏 + 字幕 |
 
 ---
 
