@@ -71,7 +71,7 @@ if ($gh) {
     $remote = git remote get-url origin 2> $null
     if ($remote) {
         git push -u origin $branch
-        if ($tag) { git push origin $tag }
+        if ($tag) { git push origin $tag } else { git push origin --tags }
     } else {
         gh repo create $repoName --$visibility --source=. --remote=origin --description $desc
     }
@@ -115,8 +115,8 @@ Write-Host "  password: paste your PAT (GitHub Token / Gitee private token)" -Fo
 Write-Host "  (cursor won't move while typing password, just paste + Enter)" -ForegroundColor DarkGray
 Write-Host ""
 git push -u origin $branch
-if ($LASTEXITCODE -eq 0 -and $tag) {
-    git push origin $tag
+if ($LASTEXITCODE -eq 0) {
+    if ($tag) { git push origin $tag } else { git push origin --tags }
 }
 
 Write-Host ""
