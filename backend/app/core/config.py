@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     deepseek_model: str = "deepseek-chat"
 
     # ====== 通义千问 VL ======
-    qwen_vl_model: str = "qwen-vl-plus"
+    qwen_vl_model: str = "qwen3-vl-plus"
 
     # ====== Edge-TTS ======
     edge_tts_voice: str = "zh-CN-XiaoxiaoNeural"
