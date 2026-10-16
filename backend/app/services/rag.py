@@ -11,9 +11,19 @@ import os
 from functools import lru_cache
 from pathlib import Path
 
-import chromadb
-from chromadb.config import Settings as ChromaSettings
-from sentence_transformers import SentenceTransformer
+# RAG 依赖是可选的：未安装时应用仍可启动（仅向量检索功能降级）。
+# 这也保证 CI 环境（只装 core+ai 依赖）能通过导入冒烟测试。
+try:  # pragma: no cover - import guard
+    import chromadb
+    from chromadb.config import Settings as ChromaSettings
+    from sentence_transformers import SentenceTransformer
+
+    RAG_DEPENDENCIES_AVAILABLE = True
+except ImportError:  # chromadb / sentence-transformers 未安装
+    chromadb = None
+    ChromaSettings = None
+    SentenceTransformer = None
+    RAG_DEPENDENCIES_AVAILABLE = False
 
 from app.core.config import settings
 from app.services import deepseek
@@ -25,6 +35,12 @@ COLLECTION_NAME = "medicines"
 @lru_cache(maxsize=1)
 def _get_vectorstore():
     """单例加载向量库和 embedding 模型"""
+    if not RAG_DEPENDENCIES_AVAILABLE:
+        raise RuntimeError(
+            "RAG 依赖未安装 (chromadb / sentence-transformers)。\n"
+            "完整安装: cd backend && pip install -r requirements-rag.txt\n"
+            "未安装时应用可启动，但药品说明书向量检索不可用。"
+        )
     if not os.path.exists(settings.chroma_persist_dir):
         raise FileNotFoundError(
             f"向量库不存在: {settings.chroma_persist_dir}\n"

@@ -111,7 +111,10 @@ def test_model_modules_importable():
     try:
         import app.services.rag as rag  # noqa: F401
 
-        assert hasattr(rag, "analyze_interactions")
+        assert hasattr(rag, "check_interactions")
+        assert hasattr(rag, "search_medicine_info")
+        # RAG 可选依赖未安装时模块也能导入（优雅降级）
+        assert hasattr(rag, "RAG_DEPENDENCIES_AVAILABLE")
     except ModuleNotFoundError as e:
         # 跳过的常见原因：chromadb / sentence-transformers 未装
         if "chromadb" in str(e) or "sentence_transformers" in str(e):
