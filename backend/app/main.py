@@ -99,6 +99,13 @@ app.include_router(
 if SERVE_SPA:
     # SPA 兜底：非 /api、非 /docs 的路径都返回 index.html（前端路由用）
     # 静态资源（/assets/...）存在则直出文件，否则回落到 index.html
+    # index_inline.html：CSS 已内嵌的版本（规避个别环境单独拉取 CSS 失败）
+    _SPA_INDEX = (
+        FRONTEND_DIST / "index_inline.html"
+        if (FRONTEND_DIST / "index_inline.html").is_file()
+        else FRONTEND_DIST / "index.html"
+    )
+
     @app.get("/{full_path:path}", include_in_schema=False)
     async def _spa_fallback(full_path: str):
         target = (FRONTEND_DIST / full_path).resolve()
@@ -107,4 +114,4 @@ if SERVE_SPA:
             and FRONTEND_DIST.resolve() in target.parents
         ):
             return FileResponse(target)
-        return FileResponse(FRONTEND_DIST / "index.html")
+        return FileResponse(_SPA_INDEX)
