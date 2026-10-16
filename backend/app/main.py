@@ -3,11 +3,22 @@
 阶段 2：挂载 4 个业务路由（识药 / 相互作用 / 语音问答 / TTS）
 阶段 5：生产化（CORS 收紧 + 启动横幅）
 """
+import os
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 from app.core.config import settings
 from app.api import medicine, interaction, voice
+
+# 前端生产构建产物目录（backend/app/main.py -> 项目根/frontend/dist）
+FRONTEND_DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+# 后端直接托管前端：只有一条服务、一个端口、同源，无需 vite 代理和跨域
+SERVE_SPA = os.getenv("SERVE_FRONTEND", "1") != "0" and (
+    FRONTEND_DIST / "index.html"
+).is_file()
 
 app = FastAPI(
     title="智药通 API",
@@ -50,13 +61,14 @@ async def _startup_banner():
     )
 
 
-@app.get("/")
+@app.get("/api/root")
 def root():
     """根路径"""
     return {
         "message": "智药通 API is running",
         "version": app.version,
         "docs": "/docs",
+        "frontend_served": SERVE_SPA,
     }
 
 
@@ -82,3 +94,17 @@ app.include_router(
     prefix="/api/voice",
     tags=["语音问答 & TTS"],
 )
+
+
+if SERVE_SPA:
+    # SPA 兜底：非 /api、非 /docs 的路径都返回 index.html（前端路由用）
+    # 静态资源（/assets/...）存在则直出文件，否则回落到 index.html
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def _spa_fallback(full_path: str):
+        target = (FRONTEND_DIST / full_path).resolve()
+        if (
+            target.is_file()
+            and FRONTEND_DIST.resolve() in target.parents
+        ):
+            return FileResponse(target)
+        return FileResponse(FRONTEND_DIST / "index.html")
