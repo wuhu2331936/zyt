@@ -113,5 +113,9 @@ if SERVE_SPA:
             target.is_file()
             and FRONTEND_DIST.resolve() in target.parents
         ):
+            # sw.js 每次都回源校验，确保客户端 Service Worker 能立即更新
+            if target.name == "sw.js":
+                return FileResponse(target, headers={"Cache-Control": "no-cache"})
             return FileResponse(target)
-        return FileResponse(_SPA_INDEX)
+        # HTML 入口禁止缓存，避免浏览器拿到旧版无样式页面
+        return FileResponse(_SPA_INDEX, headers={"Cache-Control": "no-store"})
