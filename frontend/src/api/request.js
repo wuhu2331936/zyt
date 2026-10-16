@@ -2,7 +2,10 @@ import axios from 'axios'
 import { showToast } from 'vant'
 
 // 从 .env 读取 baseURL（VITE_API_BASE_URL=http://localhost:8000/api）
-const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api'
+// 默认同源 /api：手机通过局域网 IP 访问时，请求打到页面自身的服务器
+// （再由 dev/preview 的 proxy 转发到后端），而不是手机自己的 localhost，
+// 否则手机端所有 AI 接口都会失败。
+const baseURL = import.meta.env.VITE_API_BASE_URL || '/api'
 
 const request = axios.create({
   baseURL,

@@ -74,6 +74,24 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: 5173,
+    // 同源 /api 转发到后端：手机访问时也能正常调用 AI 接口
+    proxy: {
+      "/api": {
+        target: "http://127.0.0.1:8000",
+        changeOrigin: true,
+      },
+    },
     // PWA 必须在 https 或 localhost 才生效——开发环境 localhost 自动 ok
+  },
+  preview: {
+    host: "0.0.0.0",
+    port: 4173,
+    // preview（生产构建静态托管）同样需要转发，否则 /api 404
+    proxy: {
+      "/api": {
+        target: "http://127.0.0.1:8000",
+        changeOrigin: true,
+      },
+    },
   },
 });
