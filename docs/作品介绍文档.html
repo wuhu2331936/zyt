@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>智药通 作品介绍文档</title><style>
+@page { size: A4; margin: 18mm 16mm; }
+* { box-sizing: border-box; }
+body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+       font-size: 11pt; line-height: 1.75; color: #1a1a2e; margin: 0; }
+h1 { font-size: 20pt; color: #0d47a1; border-bottom: 3px solid #1976d2;
+     padding-bottom: 8px; margin-top: 24px; }
+h1:first-of-type { margin-top: 0; text-align: center; border-bottom: none;
+     font-size: 24pt; padding: 60px 0 10px; }
+h2 { font-size: 15pt; color: #1565c0; margin-top: 28px;
+     border-left: 5px solid #1976d2; padding-left: 10px;
+     page-break-after: avoid; }
+h3 { font-size: 12.5pt; color: #283593; page-break-after: avoid; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0;
+        font-size: 9.5pt; page-break-inside: avoid; }
+th { background: #e3f2fd; color: #0d47a1; padding: 7px 9px;
+     border: 1px solid #bbdefb; text-align: left; }
+td { padding: 6px 9px; border: 1px solid #e3f2fd; }
+tr:nth-child(even) td { background: #fafcff; }
+code { font-family: Consolas, monospace; background: #eef2f7;
+       padding: 1px 4px; border-radius: 3px; font-size: 9.5pt; }
+blockquote { border-left: 4px solid #90caf9; background: #f3f8fe;
+             margin: 12px 0; padding: 8px 14px; color: #455a64; }
+ul, ol { padding-left: 24px; }
+img { display: block; margin: 14px auto; max-width: 82%;
+      border: 1px solid #cfd8e3; border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(13, 71, 161, 0.10);
+      page-break-inside: avoid; }
+p:has(img) { text-align: center; }
+</style></head>
+<body><h1>智药通 —— AI 老年人用药安全助手 作品介绍文档</h1>
+<blockquote>
+<p>参赛项目：传智杯 AI 创新应用挑战赛 · 个人赛
+代码仓库：https://github.com/wuhu2331936/zyt （Public，32 次细粒度提交，v0.3.0 版本发布）</p>
+</blockquote>
+<h2>一、项目详情及使用方式</h2>
+<h3>1.1 项目定位</h3>
+<p>智药通是一款面向老年人及照护者的<strong>AI 用药安全助手</strong>，以手机浏览器即可打开的 H5/PWA（渐进式 Web 应用）形式交付，无需下载安装 App。它解决三个老年人用药的高频痛点：</p>
+<ul>
+<li><strong>看不懂药盒</strong>：字体小、说明书专业术语密集、药品名称相近难以分辨；</li>
+<li><strong>记不住风险</strong>：同时服用多种药物时，相互作用和禁忌凭经验判断容易出错；</li>
+<li><strong>问诊不方便</strong>：子女不在身边时，用药疑问无人可问。</li>
+</ul>
+<h3>1.2 核心功能</h3>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>说明</th>
+<th>背后技术</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>拍照识药</td>
+<td>对药盒/说明书拍照，AI 识别并返回通俗易懂的药品说明</td>
+<td>通义千问 VL（Qwen-VL）视觉模型</td>
+</tr>
+<tr>
+<td>用药安全分析</td>
+<td>输入正在服用的多种药品，分析相互作用与风险等级</td>
+<td>DeepSeek + ChromaDB RAG 检索增强</td>
+</tr>
+<tr>
+<td>用药提醒</td>
+<td>按医嘱设置提醒，到点提醒服药</td>
+<td>前端本地通知 + localStorage</td>
+</tr>
+<tr>
+<td>语音问答</td>
+<td>说话提问、语音回答，全程不用打字</td>
+<td>浏览器 Web Speech + Edge-TTS</td>
+</tr>
+</tbody>
+</table>
+<h3>1.3 使用方式</h3>
+<ol>
+<li><strong>在线访问</strong>：浏览器打开部署地址即可使用，支持"添加到主屏幕"作为 PWA 安装；</li>
+<li><strong>本地部署</strong>：仓库含 Dockerfile 与一键启动脚本，<code>pip install -r requirements-core.txt</code> 后 <code>uvicorn</code> 启动后端、<code>npm run dev</code> 启动前端；</li>
+<li><strong>云端部署</strong>：提供 render.yaml（后端）与 vercel.json/netlify.toml（前端）配置，可一键部署到 Render + Vercel 免费档。</li>
+</ol>
+<p>使用流程（以"多药同服风险分析"为例）：进入"用药助手"页 → 逐个添加正在服用的药品名称 → 点击"分析" → 系统先从 30 条内置药品说明书向量库中检索相关段落，再由大模型给出风险等级、冲突说明与建议，全程语音可读。</p>
+<h2>二、项目亮点</h2>
+<ol>
+<li><strong>真实的适老化设计</strong>：大字体、高对比度、语音优先的交互方式，界面文案经口语化改写（如"相互作用"改述为"一起吃会不会打架"），而非把通用界面简单放大。</li>
+<li><strong>检索增强（RAG）约束幻觉</strong>：不裸调大模型，先用 ChromaDB 从结构化药品说明书中检索相关段落，作为事实依据注入 Prompt，显著降低医学幻觉风险；检索不到时明确告知"建议咨询医师/药师"，而非编造答案。</li>
+<li><strong>JSON Schema 结构化输出契约</strong>：要求模型按固定 JSON Schema 返回（药品名、风险等级、建议列表），前端按契约渲染，保证输出稳定可解析。</li>
+<li><strong>四级失败降级链</strong>：RAG 检索失败 → 退化为纯模型知识；模型超时 → 重试一次；仍然失败 → 给出静态安全提示。任何单一外部依赖故障都不会导致白屏。</li>
+<li><strong>轻量 PWA</strong>：可安装、可离线打开壳页面，Vite 构建产物小，适配老年人低配手机与弱网环境。</li>
+<li><strong>规范的软件工程</strong>：Conventional Commits、32 次细粒度提交、GitHub Actions CI（前端构建 + 后端 pytest 8 项测试）、MIT License、完整的需求/技术/部署/FAQ 文档。</li>
+</ol>
+<h2>三、AI 技术落地使用情况概述</h2>
+<h3>3.1 产品内 AI 能力</h3>
+<ul>
+<li><strong>通义千问 VL（DashScope API）</strong>：拍照识药入口。输入药盒照片，输出结构化药品信息；对模糊照片返回"无法识别"而非猜测。</li>
+<li><strong>DeepSeek（OpenAI 兼容 API）</strong>：用药问答、相互作用分析、风险总结。统一走服务端转发，Key 不落前端。</li>
+<li><strong>RAG 检索增强</strong>：内置 30 条常见药品结构化说明书，bge-small-zh 中文向量模型 + ChromaDB 持久化检索，Top-4 段落注入 Prompt。</li>
+<li><strong>Edge-TTS</strong>：中文语音合成回答，免费无 Key，适合老年用户"听"回答。</li>
+</ul>
+<h3>3.2 AI 辅助研发（AI 协同开发）</h3>
+<p>本项目由 AI 结对开发完成，过程留痕于仓库 <code>docs/ai-prompts/AI-COLLABORATION-LOG.md</code>，含 3 条完整可复现的 Prompt 链：</p>
+<ol>
+<li><strong>架构设计链</strong>：由需求推导出前后端分离 + RAG 的技术选型与目录结构；</li>
+<li><strong>代码实现链</strong>：分阶段生成后端服务/前端页面，并迭代修复跨平台兼容问题；</li>
+<li><strong>测试与文档链</strong>：AI 生成 pytest 测试用例、PWA 图标生成脚本与全套中文文档。</li>
+</ol>
+<p>CI 中的 8 项 pytest 用例即由 AI 编写并在 AI 协作下定位修复了真实缺陷（如 RAG 可选依赖的导入守卫）。</p>
+<h2>四、项目中涉及的关键技术</h2>
+<ul>
+<li><strong>后端</strong>：Python FastAPI + Pydantic v2（请求/响应模型校验）、uvicorn、python-dotenv 环境配置；</li>
+<li><strong>前端</strong>：Vue 3 组合式 API + Vite + Vant 组件库 + Pinia 状态管理 + Vue Router 懒加载，vite-plugin-pwa 实现 PWA；</li>
+<li><strong>AI 集成</strong>：DashScope SDK（Qwen-VL）、DeepSeek HTTP API、Edge-TTS；</li>
+<li><strong>RAG</strong>：ChromaDB 持久化向量库、BAAI/bge-small-zh 中文 Embedding、Top-K 检索 + Prompt 注入；</li>
+<li><strong>可靠性</strong>：JSON Schema 输出约束、超时重试、四级降级链、可选依赖优雅降级（未安装 RAG 依赖时应用仍可启动）；</li>
+<li><strong>工程化</strong>：GitHub Actions CI、Docker、pytest + httpx 异步测试、Conventional Commits。</li>
+</ul>
+<h2>五、项目相关图片</h2>
+<p>以下为应用主要界面的设计稿截图：</p>
+<p><img alt="首页" src="screenshots/home.svg" /></p>
+<p><img alt="拍照识药 - 上传" src="screenshots/scan-upload.svg" /></p>
+<p><img alt="拍照识药 - 识别结果" src="screenshots/scan-result.svg" /></p>
+<p><img alt="用药安全分析" src="screenshots/interaction.svg" /></p>
+<p><img alt="用药提醒" src="screenshots/reminder.svg" /></p>
+<p><img alt="语音问答" src="screenshots/voice-qa.svg" /></p>
+<h2>六、项目之前是否发表或获奖</h2>
+<p>本项目为本次比赛<strong>首次公开发布</strong>，此前未在任何平台发表，未参加过其他比赛，未获得任何奖项。</p>
+<h2>七、是否基于其他项目优化</h2>
+<p>否。本项目为<strong>从零开始的原创开发</strong>，未基于任何已有项目二次开发或优化。所有代码、文档、界面设计均在本仓库 Git 历史中可追溯（6 个开发阶段、32 次提交）。</p></body></html>
