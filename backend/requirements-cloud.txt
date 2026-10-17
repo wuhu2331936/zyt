@@ -1,0 +1,21 @@
+# 云端部署专用依赖（轻量版）
+# 与 requirements.txt 的区别：去掉 RAG 三件套（chromadb / sentence-transformers / pypdf）
+# 这三者会拖入 torch（约 2GB），免费云主机（512MB 内存）装不上也跑不动。
+# 代码里 app/services/rag.py 已有 ImportError 降级：缺这些包时 RAG 自动禁用，
+# 其余功能（拍照识药 / AI 问答 / 语音播报 / 相互作用检查）完全不受影响。
+
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+python-multipart==0.0.12
+
+pydantic==2.9.2
+pydantic-settings==2.6.1
+python-dotenv==1.0.1
+
+httpx==0.27.2
+openai==1.51.0
+
+dashscope==1.20.11
+edge-tts==6.1.18
+
+Pillow==10.4.0

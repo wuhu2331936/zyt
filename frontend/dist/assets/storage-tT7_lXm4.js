@@ -1,0 +1,1 @@
+const r="zhiyaotong:";function n(o,t=null){try{const e=localStorage.getItem(r+o);return e?JSON.parse(e):t}catch{return t}}function a(o,t){try{localStorage.setItem(r+o,JSON.stringify(t))}catch(e){console.warn("localStorage 写入失败",e)}}export{n as g,a as s};

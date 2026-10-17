@@ -1,47 +1,22 @@
-# =============================================================================
-# Render 部署配置（blueprint 模式）
-# 用途：render.com 账号 → New → Blueprint → 选本仓库 → 自动识别此文件
-# =============================================================================
-
+# Render Blueprint —— 推到 GitHub 后在 Render 里 "New > Blueprint" 选这个仓库即可一键部署。
+# 后端单端口 8000 同时托管前端 dist，所以只需要一个 Web Service，一个公网网址搞定。
 services:
   - type: web
-    name: zhijiayaotong-api
-    runtime: docker
-    rootDir: backend
-    plan: starter             # 免费版可用 starter（$7/月，512MB RAM）
-                              # 个人赛评奖阶段可临时升级到 standard（2GB）
+    name: zhiyaotong
+    runtime: python
+    plan: free
+    region: singapore          # 新加坡节点，国内访问相对最快
+    branch: main
     healthCheckPath: /api/health
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
-
+    buildCommand: pip install --upgrade pip && pip install -r backend/requirements-cloud.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
-        value: 3.12.0
-      # ===== 必填：申请后填入 =====
+        value: "3.11.9"
+      - key: SERVE_FRONTEND
+        value: "1"
+      # 下面两个 Key 在 Render 面板里手填，不要写进仓库（sync: false = 不随仓库同步）
       - key: DASHSCOPE_API_KEY
-        sync: false            # 标记为敏感（不显示值）
+        sync: false
       - key: DEEPSEEK_API_KEY
         sync: false
-      # ===== 可选（已有默认值）=====
-      - key: DASHSCOPE_BASE_URL
-        value: https://dashscope.aliyuncs.com/api/v1
-      - key: DEEPSEEK_BASE_URL
-        value: https://api.deepseek.com
-      - key: DEEPSEEK_MODEL
-        value: deepseek-chat
-      - key: QWEN_VL_MODEL
-        value: qwen-vl-plus
-      - key: EMBEDDING_MODEL
-        value: BAAI/bge-small-zh
-      - key: CHROMA_PERSIST_DIR
-        value: ./app/data/chroma
-      - key: APP_DEBUG
-        value: false
-      - key: EDGE_TTS_VOICE
-        value: zh-CN-XiaoxiaoNeural
-
-    # 把 ChromaDB 数据持久化（避免每次部署重建）
-    disk:
-      name: chroma-data
-      mountPath: /app/app/data/chroma
-      sizeGB: 1

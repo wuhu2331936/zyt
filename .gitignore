@@ -27,6 +27,15 @@ dist-ssr/
 *.local
 .vite/
 
+# 例外：前端构建产物要入库，云端（Render）直接托管它，不再跑 npm build
+!frontend/dist/
+!frontend/dist/**
+
+# 构建过程中产生的临时目录 / vite 时间戳文件
+frontend/dist_bak/
+frontend/dist_old_*/
+*.timestamp-*.mjs
+
 # ====== IDE / 系统 ======
 .vscode/
 .idea/
