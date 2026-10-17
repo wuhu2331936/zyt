@@ -54,6 +54,19 @@ def ensure_medbox() -> Path:
     return MEDBOX
 
 
+def dismiss_interstitial(page) -> bool:
+    """CloudBase 测试域名会先展示「页面访问提示」拦截页，需点「确定访问」进入。"""
+    try:
+        btn = page.get_by_text("确定访问").first
+        btn.wait_for(state="visible", timeout=6000)
+        btn.click(timeout=6000)
+        print("已通过 CloudBase 拦截页")
+        page.wait_for_load_state("domcontentloaded")
+        return True
+    except Exception:
+        return False
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default=BASE_DEFAULT, help="站点地址")
@@ -77,7 +90,9 @@ def main() -> None:
             record_video_size={"width": 390, "height": 844},
         )
         page = ctx.new_page()
-        page.goto(args.base, wait_until="networkidle", timeout=90000)
+        page.goto(args.base, wait_until="domcontentloaded", timeout=90000)
+        dismiss_interstitial(page)
+        page.wait_for_load_state("networkidle", timeout=60000)
 
         # 预置一种常用药：保证后面「相互作用检查」按钮（≥2 种药才出现）一定可用
         page.evaluate(
@@ -90,7 +105,7 @@ def main() -> None:
               }
             }"""
         )
-        page.reload(wait_until="networkidle")
+        page.reload(wait_until="domcontentloaded")
 
         def wait(ms: int) -> None:
             page.wait_for_timeout(ms)
@@ -143,7 +158,8 @@ def main() -> None:
             print("加入药箱失败:", e)
 
         # ---- 3. 相互作用（先确保清单里有第二种药）----
-        page.goto(args.base, wait_until="networkidle", timeout=60000)
+        page.goto(args.base, wait_until="domcontentloaded", timeout=60000)
+        dismiss_interstitial(page)
         page.evaluate(
             """() => {
               const key='zhiyaotong:medicines';
@@ -154,7 +170,7 @@ def main() -> None:
               }
             }"""
         )
-        page.reload(wait_until="networkidle")
+        page.reload(wait_until="domcontentloaded")
         wait(2500)
         try:
             print("药品数:", page.evaluate("JSON.parse(localStorage.getItem('zhiyaotong:medicines')||'[]').length"))

@@ -16,7 +16,7 @@
         :class="m.role"
       >
         <div class="bubble">
-          {{ m.content }}
+          <div class="bubble-text" v-html="mdToHtml(m.content)"></div>
           <span v-if="m.role === 'assistant' && m.isDemo" class="demo-flag">
             ⚠️ AI 不可用，这是预置兜底回答
           </span>
@@ -66,6 +66,7 @@ import { useVoiceStore } from '@/stores/voice'
 import { useMedicineStore } from '@/stores/medicine'
 import { voiceChat } from '@/api/voice'
 import { speakText, isASRSupported } from '@/utils/audio'
+import { mdToHtml } from '@/utils/markdown'
 import VoiceButton from '@/components/VoiceButton.vue'
 import EmptyState from '@/components/EmptyState.vue'
 
@@ -217,6 +218,23 @@ function confirmClear() {
   margin-top: 6px;
   font-size: 12px;
   color: #ff976a;
+}
+.bubble-text :deep(ol),
+.bubble-text :deep(ul) {
+  margin: 4px 0;
+  padding-left: 20px;
+}
+.bubble-text :deep(ol) {
+  list-style: decimal;
+}
+.bubble-text :deep(ul) {
+  list-style: disc;
+}
+.bubble-text :deep(li) {
+  margin: 2px 0;
+}
+.bubble-text :deep(strong) {
+  font-weight: 600;
 }
 .asr-unsupported {
   margin: 4px 0 0;

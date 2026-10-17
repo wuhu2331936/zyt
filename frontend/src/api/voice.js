@@ -24,7 +24,7 @@ export async function textToSpeech(text, voice) {
   const res = await request.post(
     '/voice/tts',
     { text, voice },
-    { responseType: 'blob' }
+    { responseType: 'blob', silent: true } // 失败由调用方静默降级浏览器语音
   )
   return URL.createObjectURL(res)
 }

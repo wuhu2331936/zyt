@@ -59,6 +59,8 @@ def make_intro() -> Path:
     center_text(d, 420, "智 药 通", font(52), (255, 255, 255))
     center_text(d, 500, "AI 老年人用药安全助手", font(22, False), (235, 250, 255))
     center_text(d, 560, "拍照识药 · 用药问答 · 相互作用 · 服药提醒", font(15, False), (220, 245, 255))
+    d.rounded_rectangle([W / 2 - 105, 610, W / 2 + 105, 648], radius=19, fill=(255, 255, 255))
+    center_text(d, 620, "云端已部署 · 公网可访问", font(17), (59, 141, 255))
     center_text(d, 740, "功能演示", font(18, False), (255, 255, 255))
     p = Path(os.environ.get("TEMP", ".")) / "zyt_intro.png"
     img.save(p)
