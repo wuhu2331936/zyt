@@ -513,7 +513,8 @@ onMounted(() => {
 .interaction-btn {
   margin-top: 18px;
 }
+/* 底部留白已由 App.vue 的 .page-wrap.has-tabbar 统一处理 */
 .bottom-spacer {
-  height: 90px;
+  height: 8px;
 }
 </style>

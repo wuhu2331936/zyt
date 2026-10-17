@@ -7,11 +7,14 @@
       <span class="demo-close" @click="bannerClosed = true">×</span>
     </div>
 
-    <router-view v-slot="{ Component }">
-      <transition name="fade" mode="out-in">
-        <component :is="Component" />
-      </transition>
-    </router-view>
+    <!-- 有 TabBar 的页面必须留出底部空间，否则页面底部的按钮被固定栏压住点不到 -->
+    <div class="page-wrap" :class="{ 'has-tabbar': showTabbar }">
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
+    </div>
 
     <!-- 底部 TabBar（只在主要页面显示） -->
     <van-tabbar v-if="showTabbar" v-model="activeTab" route safe-area-inset-bottom>
@@ -74,6 +77,10 @@ watch(
 .app-root {
   min-height: 100vh;
   padding-bottom: env(safe-area-inset-bottom);
+}
+/* TabBar 是 fixed 定位，页面底部内容需要让位，否则按钮被压住无法点击 */
+.page-wrap.has-tabbar {
+  padding-bottom: 70px;
 }
 .demo-banner {
   display: flex;
