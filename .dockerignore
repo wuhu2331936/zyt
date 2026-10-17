@@ -1,0 +1,17 @@
+# 减小云端构建上下文，避免把几百 MB 的 node_modules / venv 传上去
+.git
+node_modules
+frontend/node_modules
+frontend/src
+frontend/dist_bak
+frontend/dist_old_*
+backend/venv
+backend/.venv
+backend/.env
+backend/__pycache__
+backend/app/data/chroma
+**/__pycache__
+**/*.pyc
+*.zip
+*.bundle
+*.log
