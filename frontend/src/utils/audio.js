@@ -122,6 +122,11 @@ export async function speakText(text, { voice, lang = 'zh-CN', onEnd, onError } 
   // 1) 优先后端 Edge-TTS（音色更好）
   try {
     const url = await textToSpeech(text, voice)
+    // 服务端返回 204（无音频）→ 直接用浏览器语音，不打扰用户
+    if (!url) {
+      if (!browserSpeak(text, { lang, onEnd })) onError?.(new Error('语音播报不可用'))
+      return null
+    }
     return playAudio(url, {
       onEnd,
       // 音频加载/播放失败时降级，不要静默吞掉

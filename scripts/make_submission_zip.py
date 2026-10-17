@@ -25,7 +25,8 @@ EXCLUDE_DIRS = {
     ".idea", ".vscode", "logs", "chroma_db",
 }
 EXCLUDE_FILES = {".env", ".DS_Store", "thumbs.db"}
-EXCLUDE_SUFFIX = {".pyc", ".pyo", ".log", ".tmp", ".bak"}
+# 媒体 / 压缩包不进源码包：评审包只要能跑起来的代码，视频单独交付
+EXCLUDE_SUFFIX = {".pyc", ".pyo", ".log", ".tmp", ".bak", ".mp4", ".webm", ".zip", ".bundle"}
 
 
 def should_skip(rel: Path) -> bool:
