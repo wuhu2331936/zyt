@@ -34,11 +34,12 @@ code { font-family: Consolas, monospace; background: #eef2f7;
 blockquote { border-left: 4px solid #90caf9; background: #f3f8fe;
              margin: 12px 0; padding: 8px 14px; color: #455a64; }
 ul, ol { padding-left: 24px; }
-img { display: block; margin: 14px auto; max-width: 82%;
+figure { margin: 14px 0; text-align: center; page-break-inside: avoid; }
+figure img { display: block; margin: 0 auto; max-width: 62%; max-height: 170mm;
+      width: auto; height: auto;
       border: 1px solid #cfd8e3; border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(13, 71, 161, 0.10);
-      page-break-inside: avoid; }
-p:has(img) { text-align: center; }
+      box-shadow: 0 2px 8px rgba(13, 71, 161, 0.10); }
+figcaption { font-size: 10pt; color: #455a64; margin-top: 5px; }
 """
 
 html = f"""<!doctype html>

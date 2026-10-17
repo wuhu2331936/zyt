@@ -24,16 +24,18 @@ code { font-family: Consolas, monospace; background: #eef2f7;
 blockquote { border-left: 4px solid #90caf9; background: #f3f8fe;
              margin: 12px 0; padding: 8px 14px; color: #455a64; }
 ul, ol { padding-left: 24px; }
-img { display: block; margin: 14px auto; max-width: 82%;
+figure { margin: 14px 0; text-align: center; page-break-inside: avoid; }
+figure img { display: block; margin: 0 auto; max-width: 62%; max-height: 170mm;
+      width: auto; height: auto;
       border: 1px solid #cfd8e3; border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(13, 71, 161, 0.10);
-      page-break-inside: avoid; }
-p:has(img) { text-align: center; }
+      box-shadow: 0 2px 8px rgba(13, 71, 161, 0.10); }
+figcaption { font-size: 10pt; color: #455a64; margin-top: 5px; }
 </style></head>
 <body><h1>智药通 —— AI 老年人用药安全助手 作品介绍文档</h1>
 <blockquote>
 <p>参赛项目：传智杯 AI 创新应用挑战赛 · 个人赛
-代码仓库：https://github.com/wuhu2331936/zyt （Public，32 次细粒度提交，v0.3.0 版本发布）</p>
+代码仓库：https://github.com/wuhu2331936/zyt （Public，53 次细粒度提交，v0.4.0 版本发布）
+在线体验：https://zhiyaotong-330314-11-1509077553.sh.run.tcloudbase.com （已部署公网，浏览器打开即可试用）</p>
 </blockquote>
 <h2>一、项目详情及使用方式</h2>
 <h3>1.1 项目定位</h3>
@@ -55,18 +57,18 @@ p:has(img) { text-align: center; }
 <tbody>
 <tr>
 <td>拍照识药</td>
-<td>对药盒/说明书拍照，AI 识别并返回通俗易懂的药品说明</td>
-<td>通义千问 VL（Qwen-VL）视觉模型</td>
+<td>对药盒拍照，先由视觉模型读出盒面信息，再由大模型补全说明书级讲解（用法用量、禁忌、药师叮嘱）</td>
+<td>通义千问 VL（Qwen3-VL）+ DeepSeek 两阶段识别</td>
 </tr>
 <tr>
 <td>用药安全分析</td>
-<td>输入正在服用的多种药品，分析相互作用与风险等级</td>
+<td>输入正在服用的多种药品，分析相互作用与风险等级（如「较严重」）</td>
 <td>DeepSeek + ChromaDB RAG 检索增强</td>
 </tr>
 <tr>
 <td>用药提醒</td>
-<td>按医嘱设置提醒，到点提醒服药</td>
-<td>前端本地通知 + localStorage</td>
+<td>按医嘱设置提醒，到点弹窗 + 系统通知 + 语音播报，支持「吃了 / 撤销」</td>
+<td>前端全局监听 + Notification + Web Speech</td>
 </tr>
 <tr>
 <td>语音问答</td>
@@ -77,11 +79,11 @@ p:has(img) { text-align: center; }
 </table>
 <h3>1.3 使用方式</h3>
 <ol>
-<li><strong>在线访问</strong>：浏览器打开部署地址即可使用，支持"添加到主屏幕"作为 PWA 安装；</li>
-<li><strong>本地部署</strong>：仓库含 Dockerfile 与一键启动脚本，<code>pip install -r requirements-core.txt</code> 后 <code>uvicorn</code> 启动后端、<code>npm run dev</code> 启动前端；</li>
-<li><strong>云端部署</strong>：提供 render.yaml（后端）与 vercel.json/netlify.toml（前端）配置，可一键部署到 Render + Vercel 免费档。</li>
+<li><strong>在线访问</strong>：浏览器打开上方「在线体验」地址即可使用（已部署到腾讯云 CloudBase 云托管，7×24 小时可访问），支持"添加到主屏幕"作为 PWA 安装；</li>
+<li><strong>本地部署</strong>：仓库含 Dockerfile 与一键启动脚本，<code>pip install -r requirements.txt</code> 后 <code>uvicorn</code> 启动后端、<code>npm run dev</code> 启动前端；</li>
+<li><strong>云端部署</strong>：仓库含 Dockerfile 与 CloudBase 云托管配置，Git 推送后自动构建部署。</li>
 </ol>
-<p>使用流程（以"多药同服风险分析"为例）：进入"用药助手"页 → 逐个添加正在服用的药品名称 → 点击"分析" → 系统先从 30 条内置药品说明书向量库中检索相关段落，再由大模型给出风险等级、冲突说明与建议，全程语音可读。</p>
+<p>使用流程（以"多药同服风险分析"为例）：首页"我的用药清单"逐个添加正在服用的药品（支持拍照识药自动录入）→ 点击"检查药物相互作用" → 系统先从 30 条内置药品说明书向量库中检索相关段落，再由大模型给出风险等级、冲突说明与建议，全程语音可读。</p>
 <h2>二、项目亮点</h2>
 <ol>
 <li><strong>真实的适老化设计</strong>：大字体、高对比度、语音优先的交互方式，界面文案经口语化改写（如"相互作用"改述为"一起吃会不会打架"），而非把通用界面简单放大。</li>
@@ -89,13 +91,13 @@ p:has(img) { text-align: center; }
 <li><strong>JSON Schema 结构化输出契约</strong>：要求模型按固定 JSON Schema 返回（药品名、风险等级、建议列表），前端按契约渲染，保证输出稳定可解析。</li>
 <li><strong>四级失败降级链</strong>：RAG 检索失败 → 退化为纯模型知识；模型超时 → 重试一次；仍然失败 → 给出静态安全提示。任何单一外部依赖故障都不会导致白屏。</li>
 <li><strong>轻量 PWA</strong>：可安装、可离线打开壳页面，Vite 构建产物小，适配老年人低配手机与弱网环境。</li>
-<li><strong>规范的软件工程</strong>：Conventional Commits、32 次细粒度提交、GitHub Actions CI（前端构建 + 后端 pytest 8 项测试）、MIT License、完整的需求/技术/部署/FAQ 文档。</li>
+<li><strong>规范的软件工程</strong>：Conventional Commits、53 次细粒度提交、GitHub Actions CI（前端构建 + 后端 pytest 8 项测试）、MIT License、完整的需求/技术/部署/FAQ 文档。</li>
 </ol>
 <h2>三、AI 技术落地使用情况概述</h2>
 <h3>3.1 产品内 AI 能力</h3>
 <ul>
-<li><strong>通义千问 VL（DashScope API）</strong>：拍照识药入口。输入药盒照片，输出结构化药品信息；对模糊照片返回"无法识别"而非猜测。</li>
-<li><strong>DeepSeek（OpenAI 兼容 API）</strong>：用药问答、相互作用分析、风险总结。统一走服务端转发，Key 不落前端。</li>
+<li><strong>通义千问 VL（DashScope API，qwen3-vl-plus）</strong>：拍照识药第一阶段，读出药盒正面的药品名、规格、厂家、用法用量；对模糊照片返回"无法识别"而非猜测。</li>
+<li><strong>DeepSeek（OpenAI 兼容 API）</strong>：识药第二阶段——基于第一阶段结果补全说明书级讲解（老年人注意事项、漏服处理、药师叮嘱）；同时承担用药问答、相互作用分析、风险总结。统一走服务端转发，Key 不落前端。</li>
 <li><strong>RAG 检索增强</strong>：内置 30 条常见药品结构化说明书，bge-small-zh 中文向量模型 + ChromaDB 持久化检索，Top-4 段落注入 Prompt。</li>
 <li><strong>Edge-TTS</strong>：中文语音合成回答，免费无 Key，适合老年用户"听"回答。</li>
 </ul>
@@ -117,14 +119,38 @@ p:has(img) { text-align: center; }
 <li><strong>工程化</strong>：GitHub Actions CI、Docker、pytest + httpx 异步测试、Conventional Commits。</li>
 </ul>
 <h2>五、项目相关图片</h2>
-<p>以下为应用主要界面的设计稿截图：</p>
-<p><img alt="首页" src="screenshots/home.svg" /></p>
-<p><img alt="拍照识药 - 上传" src="screenshots/scan-upload.svg" /></p>
-<p><img alt="拍照识药 - 识别结果" src="screenshots/scan-result.svg" /></p>
-<p><img alt="用药安全分析" src="screenshots/interaction.svg" /></p>
-<p><img alt="用药提醒" src="screenshots/reminder.svg" /></p>
-<p><img alt="语音问答" src="screenshots/voice-qa.svg" /></p>
+<p>以下截图均来自<strong>线上部署环境的真机运行效果</strong>，与演示视频画面一致：</p>
+<figure>
+  <img src="screenshots/home.png" alt="首页" />
+  <figcaption>首页 —— 用药概览、今日服药提醒与用药清单</figcaption>
+</figure>
+
+<figure>
+  <img src="screenshots/scan-upload.png" alt="拍照识药 - 上传" />
+  <figcaption>拍照识药 —— 上传药盒照片，AI 自动识别</figcaption>
+</figure>
+
+<figure>
+  <img src="screenshots/scan-result.png" alt="拍照识药 - 识别结果" />
+  <figcaption>拍照识药 —— 识别结果：结构化药品信息 + 通俗版「药师叮嘱」</figcaption>
+</figure>
+
+<figure>
+  <img src="screenshots/interaction.png" alt="用药安全分析" />
+  <figcaption>用药安全分析 —— 相互作用风险等级（「较严重」）与具体用药建议</figcaption>
+</figure>
+
+<figure>
+  <img src="screenshots/voice-qa.png" alt="语音问答" />
+  <figcaption>语音用药问答 —— 口语化提问，结构化回答，支持语音播报</figcaption>
+</figure>
+
+<figure>
+  <img src="screenshots/reminder.png" alt="用药提醒" />
+  <figcaption>用药提醒 —— 到点语音播报，支持一键「吃了 / 撤销」</figcaption>
+</figure>
+
 <h2>六、项目之前是否发表或获奖</h2>
 <p>本项目为本次比赛<strong>首次公开发布</strong>，此前未在任何平台发表，未参加过其他比赛，未获得任何奖项。</p>
 <h2>七、是否基于其他项目优化</h2>
-<p>否。本项目为<strong>从零开始的原创开发</strong>，未基于任何已有项目二次开发或优化。所有代码、文档、界面设计均在本仓库 Git 历史中可追溯（6 个开发阶段、32 次提交）。</p></body></html>
+<p>否。本项目为<strong>从零开始的原创开发</strong>，未基于任何已有项目二次开发或优化。所有代码、文档、界面设计均在本仓库 Git 历史中可追溯（6 个开发阶段、53 次提交）。</p></body></html>
