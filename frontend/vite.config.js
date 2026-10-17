@@ -8,8 +8,10 @@ export default defineConfig({
   plugins: [
     vue(),
     VitePWA({
-      // 比赛场景默认 autoUpdate，用户无需手动刷新即可拿到新版本
-      registerType: "autoUpdate",
+      // ⚠️ selfDestroying：生成的 sw.js 只做一件事——注销旧 SW 并清空缓存。
+      // 比赛期间代码频繁更新，若用 workbox 预缓存，手机/老师浏览器会拿到旧资源
+      // （曾导致"页面白屏/旧样式"反复复现）。关掉缓存保证每次部署都是最新代码。
+      selfDestroying: true,
 
       // manifest 选项会自动生成 manifest.webmanifest
       // 也可以用 filename 指向独立的 manifest.webmanifest 文件
@@ -17,7 +19,7 @@ export default defineConfig({
       // 指向已写好的 manifest 文件（包含中文名称、截图等）
       manifestFilename: "manifest.webmanifest",
 
-      // Service Worker 缓存策略
+      // Service Worker 缓存策略（selfDestroying 为 true 时以下配置不生效，保留备用）
       workbox: {
         // 预缓存列表（globPatterns 默认会包含 html/css/js）
         globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest}"],

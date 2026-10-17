@@ -45,6 +45,9 @@ class EnrichRequest(BaseModel):
     name: str = Field(..., min_length=1, description="药品名称")
     spec: Optional[str] = Field(None, description="规格")
     manufacturer: Optional[str] = Field(None, description="生产厂家")
+    source: Literal["vl", "manual", "search", "demo"] = Field(
+        "manual", description="保留原来源标签，补全说明后不应把「手动添加」变成「搜索」"
+    )
 
 
 class InteractionRequest(BaseModel):

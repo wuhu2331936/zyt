@@ -1,1 +1,25 @@
-if(!self.define){let e,s={};const i=(i,n)=>(i=new URL(i+".js",n).href,s[i]||new Promise(s=>{if("document"in self){const e=document.createElement("script");e.src=i,e.onload=s,document.head.appendChild(e)}else e=i,importScripts(i),s()}).then(()=>{let e=s[i];if(!e)throw new Error(`Module ${i} didn’t register its module`);return e}));self.define=(n,l)=>{const r=e||("document"in self?document.currentScript.src:"")||location.href;if(s[r])return;let o={};const t=e=>i(e,r),a={module:{uri:r},exports:o,require:t};s[r]=Promise.all(n.map(e=>a[e]||t(e))).then(e=>(l(...e),o))}}define(["./workbox-6829fd8d"],function(e){"use strict";self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"registerSW.js",revision:"1872c500de691dce40960bb85481de07"},{url:"manifest.webmanifest",revision:"ca265ce5b6ea514707f84f73ade4452a"},{url:"index.html",revision:"15f6fe97a323ddec1538a630f64c7cbb"},{url:"pwa-icons/pwa-maskable-512x512.png",revision:"3c57f290a8b788576a78456656157289"},{url:"pwa-icons/pwa-512x512.png",revision:"3c57f290a8b788576a78456656157289"},{url:"pwa-icons/pwa-192x192.png",revision:"7f1bb99702745ca7418f665e81cdb315"},{url:"pwa-icons/icon.svg",revision:"959f561d3345f5cf3c106e9182ad8233"},{url:"assets/VoiceQAView-C0adxMYM.js",revision:null},{url:"assets/VoiceQAView-BcNTjSDq.css",revision:null},{url:"assets/voice-BGoF9ii9.js",revision:null},{url:"assets/storage-tT7_lXm4.js",revision:null},{url:"assets/ScanView-DMmH9oTK.css",revision:null},{url:"assets/ScanView-CwgIWr8T.js",revision:null},{url:"assets/request-BX5VeZ0g.js",revision:null},{url:"assets/ReminderView-DYNg6ZxW.js",revision:null},{url:"assets/ReminderView-BKhxi99Q.css",revision:null},{url:"assets/reminder-uflhI0MG.js",revision:null},{url:"assets/medicine-B648U351.js",revision:null},{url:"assets/index-DpLryOpY.css",revision:null},{url:"assets/index-az8TE9vO.js",revision:null},{url:"assets/HomeView-DRSSEfN-.js",revision:null},{url:"assets/HomeView-Cp-M90Ei.css",revision:null},{url:"assets/function-call--0XFuWay.js",revision:null},{url:"assets/EmptyState-C_tLvWQD.js",revision:null},{url:"assets/EmptyState-CKlk5daw.css",revision:null},{url:"assets/DetailView-hmK-QNIT.js",revision:null},{url:"assets/DetailView-D63rzms6.css",revision:null}],{}),e.cleanupOutdatedCaches(),e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html"))),e.registerRoute(/^https:\/\/fonts\.(?:googleapis|gstatic)\.com\//,new e.CacheFirst({cacheName:"google-fonts",plugins:[new e.ExpirationPlugin({maxEntries:30,maxAgeSeconds:31536e3})]}),"GET"),e.registerRoute(/\/api\/.*/,new e.NetworkFirst({cacheName:"api-cache",networkTimeoutSeconds:5,plugins:[new e.ExpirationPlugin({maxEntries:50,maxAgeSeconds:300})]}),"GET"),e.registerRoute(/\.(?:png|jpg|jpeg|svg|gif|webp)$/,new e.CacheFirst({cacheName:"images",plugins:[new e.ExpirationPlugin({maxEntries:60,maxAgeSeconds:2592e3})]}),"GET")});
+
+self.addEventListener('install', (e) => {
+  self.skipWaiting();
+});
+self.addEventListener('activate', (e) => {
+  self.registration.unregister()
+    .then(() => self.clients.matchAll())
+    .then((clients) => {
+      clients.forEach((client) => {
+        if (client instanceof WindowClient)
+          client.navigate(client.url);
+      });
+      return Promise.resolve();
+    })
+    .then(() => {
+      self.caches.keys().then((cacheNames) => {
+        Promise.all(
+          cacheNames.map((cacheName) => {
+            return self.caches.delete(cacheName);
+          }),
+        );
+      })
+    });
+});
+    

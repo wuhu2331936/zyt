@@ -127,6 +127,7 @@ async function doEnrich() {
       name: m.name,
       spec: m.spec,
       manufacturer: m.manufacturer,
+      source: m.source || 'manual',
     })
     medicineStore.updateMedicine(m.id, detail)
     showToast('已生成详细用药说明')

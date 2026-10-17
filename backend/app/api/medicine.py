@@ -74,7 +74,7 @@ async def enrich_medicine_info(req: EnrichRequest):
         name=req.name,
         spec=req.spec,
         manufacturer=req.manufacturer,
-        source="search",
+        source=req.source,
     )
     try:
         med = await medicine_knowledge.enrich_medicine(med)
