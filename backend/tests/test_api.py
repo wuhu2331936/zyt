@@ -20,10 +20,14 @@ def client():
 
 
 def test_root(client):
-    """根路径应返回 200 + JSON"""
+    """根路径托管前端 SPA（HTML），JSON 元信息改由 /api/root 提供"""
     r = client.get("/")
     assert r.status_code == 200
-    data = r.json()
+    assert "text/html" in r.headers["content-type"]
+
+    r2 = client.get("/api/root")
+    assert r2.status_code == 200
+    data = r2.json()
     assert "message" in data
     assert "version" in data
 
@@ -33,6 +37,35 @@ def test_health(client):
     r = client.get("/api/health")
     assert r.status_code == 200
     assert r.json()["status"] == "ok"
+
+
+def test_demo_mode_fallback(monkeypatch):
+    """未配置 API Key 时应降级为演示数据，而不是抛错
+
+    保证评审老师拿到源码、无任何密钥时也能完整走通识药 / 问答 / 相互作用检查。
+    """
+    import asyncio
+
+    from app.core.config import settings
+    from app.services import deepseek, qwen_vl
+
+    monkeypatch.setattr(settings, "dashscope_api_key", "")
+    monkeypatch.setattr(settings, "deepseek_api_key", "")
+
+    # 拍照识药：返回预置药品
+    med = asyncio.run(qwen_vl.recognize_medicine(b"\x89PNG\r\n\x1a\nfake"))
+    assert med is not None and med.name
+
+    # 语音问答：返回预置回答
+    answer = asyncio.run(deepseek.chat("这个药怎么吃？"))
+    assert isinstance(answer, str) and len(answer) > 0
+
+    # 相互作用：命中预置规则（阿司匹林 + 布洛芬 → 较严重）
+    risk = asyncio.run(
+        deepseek.analyze_interactions(["阿司匹林肠溶片", "布洛芬缓释胶囊"])
+    )
+    assert risk["has_risk"] is True
+    assert risk["risks"][0]["level"] == "major"
 
 
 def test_openapi_generated(client):

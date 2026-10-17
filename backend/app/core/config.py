@@ -39,6 +39,11 @@ class Settings(BaseSettings):
         "http://192.168.0.2:4173,http://192.168.0.2:5173"
     )
 
+    # ====== 演示模式 ======
+    # 供评审/演示使用：开启后（或无 API Key 时自动降级）返回预置示例数据，
+    # 让无任何密钥的人也能完整走通「拍照识药 / 语音问答 / 相互作用检查」流程。
+    demo_mode: bool = False
+
     # ====== 向量库 ======
     chroma_persist_dir: str = str(BACKEND_DIR / "app" / "data" / "chroma")
     embedding_model: str = "BAAI/bge-small-zh"

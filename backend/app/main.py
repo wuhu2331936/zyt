@@ -74,8 +74,20 @@ def root():
 
 @app.get("/api/health")
 def health():
-    """健康检查（Render / Railway 用这个做存活探针）"""
-    return {"status": "ok", "version": app.version}
+    """健康检查（Render / Railway 用这个做存活探针）
+
+    demo_mode=true 表示未配置 API Key（或显式开启演示模式），
+    此时识药 / 问答返回的是预置示例数据，流程仍可完整走通。
+    """
+    return {
+        "status": "ok",
+        "version": app.version,
+        "demo_mode": bool(
+            settings.demo_mode
+            or not settings.dashscope_api_key
+            or not settings.deepseek_api_key
+        ),
+    }
 
 
 # 业务路由

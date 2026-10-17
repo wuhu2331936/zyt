@@ -1,5 +1,12 @@
 <template>
   <div class="app-root">
+    <!-- 演示模式提示：未配置 API Key 时展示，保证评审老师知情 -->
+    <div v-if="demoMode && !bannerClosed" class="demo-banner">
+      <span class="demo-badge">演示</span>
+      <span class="demo-text">未配置 API Key，识药 / 问答返回预置示例数据</span>
+      <span class="demo-close" @click="bannerClosed = true">×</span>
+    </div>
+
     <router-view v-slot="{ Component }">
       <transition name="fade" mode="out-in">
         <component :is="Component" />
@@ -17,11 +24,25 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const activeTab = ref(0)
+
+// 演示模式标记（后端未配置 API Key 时为 true）
+const demoMode = ref(false)
+const bannerClosed = ref(false)
+
+onMounted(async () => {
+  try {
+    const res = await fetch('/api/health')
+    const data = await res.json()
+    demoMode.value = !!data.demo_mode
+  } catch {
+    demoMode.value = false
+  }
+})
 
 // 哪些路由显示 TabBar
 const TABBAR_ROUTES = ['/home', '/scan', '/voice', '/reminder']
@@ -42,6 +63,38 @@ watch(
 .app-root {
   min-height: 100vh;
   padding-bottom: env(safe-area-inset-bottom);
+}
+.demo-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: linear-gradient(90deg, #fff4e0 0%, #ffe9c7 100%);
+  border-bottom: 1px solid #ffd9a0;
+  font-size: 12px;
+  color: #8a5a12;
+  line-height: 1.4;
+}
+.demo-badge {
+  flex: none;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #ff9f1c;
+  color: #fff;
+  font-weight: 700;
+  font-size: 11px;
+}
+.demo-text {
+  flex: 1;
+  min-width: 0;
+}
+.demo-close {
+  flex: none;
+  width: 20px;
+  text-align: center;
+  font-size: 18px;
+  color: #b07b2a;
+  cursor: pointer;
 }
 .fade-enter-active,
 .fade-leave-active {

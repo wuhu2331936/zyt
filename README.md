@@ -170,6 +170,27 @@
 
 ---
 
+## 🎁 评审老师快速体验（无需 API Key）
+
+> 完整说明见 [`docs/REVIEWER_GUIDE.md`](docs/REVIEWER_GUIDE.md)
+
+**Windows 用户**：解压后双击根目录的 **`启动评审版.bat`**，脚本会自动完成
+建虚拟环境 → 装依赖 → 启服务 → 开浏览器，**全程不需要任何 API Key**。
+
+```bash
+# macOS / Linux
+cd backend && python3 -m venv venv && source venv/bin/activate
+pip install -r requirements-cloud.txt
+uvicorn app.main:app --port 8000   # 浏览器打开 http://localhost:8000
+```
+
+**内置演示模式**：未配置密钥时（或设 `DEMO_MODE=1`），页面顶部会显示橙色「演示」条，
+此时拍照识药返回预置的常用药信息、用药问答按关键词返回药师口吻答案、
+相互作用检查按内置的 4 条用药规则匹配风险 —— **零密钥也能完整走通所有交互流程**。
+真实调用失败（如账户余额不足）时同样自动降级，界面不会白屏或报错。
+
+---
+
 ## 🚀 快速开始
 
 > ⚠️ 一键复现预计需要 15 分钟（含模型下载）
