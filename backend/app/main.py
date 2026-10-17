@@ -23,7 +23,7 @@ SERVE_SPA = os.getenv("SERVE_FRONTEND", "1") != "0" and (
 app = FastAPI(
     title="智药通 API",
     description="AI 老年人用药安全助手",
-    version="0.3.0",
+    version="0.4.0",
 )
 
 
