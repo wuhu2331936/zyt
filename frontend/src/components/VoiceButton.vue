@@ -64,11 +64,12 @@ function handlePress() {
       props.onError?.(e)
     },
   })
-  // 兜底：老人可能按住不放，最多录 60 秒自动结束
+  // 兜底：老人可能按住不放，最多录 30 秒自动结束。
+  // 30 秒 @16kHz 单声道约 480KB，既能说完一整句话，也不会撞上网关的请求体大小限制。
   clearTimeout(maxTimer)
   maxTimer = setTimeout(() => {
     if (pressed) handleRelease()
-  }, 60000)
+  }, 30000)
 }
 
 async function handleRelease() {

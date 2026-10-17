@@ -82,11 +82,11 @@ const chatArea = ref(null)
 // （国内 Android Chrome 的自带识别走 Google 服务器，连不通；微信内置浏览器没有该 API）
 const asrSupported = ref(isASRSupported())
 const asrUnsupportedTip = computed(() => {
-  if (!canRecordAudio()) {
-    return '当前浏览器不支持录音，请直接在上方输入文字提问'
-  }
   if (!isSecureContext()) {
     return '录音需要 HTTPS 环境（或 localhost），请用 https 地址打开后再试'
+  }
+  if (!canRecordAudio()) {
+    return '当前浏览器无法使用麦克风（部分 App 内置浏览器受限），可改用 Safari / Chrome 打开，或直接输入文字提问'
   }
   return '语音输入暂不可用，请直接在上方输入文字提问'
 })
