@@ -48,6 +48,10 @@ class Settings(BaseSettings):
     chroma_persist_dir: str = str(BACKEND_DIR / "app" / "data" / "chroma")
     embedding_model: str = "BAAI/bge-small-zh"
 
+    # 是否启用 RAG 向量检索。云端通常不装 chromadb/sentence-transformers，
+    # 必须显式置 0，否则相互作用检查会尝试加载向量库并直接 500。
+    rag_enabled: bool = True
+
     model_config = SettingsConfigDict(
         env_file=str(BACKEND_DIR / ".env"),
         env_file_encoding="utf-8",

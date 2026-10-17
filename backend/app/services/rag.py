@@ -90,11 +90,17 @@ async def check_interactions(medicines: list[str]) -> dict:
         }
 
     # 1. 检索相关药品段落
+    # 注意：向量库不可用的原因有很多（依赖未安装 RuntimeError / 库未构建
+    # FileNotFoundError / 模型下载失败 等），任何一种都必须回落到 LLM 内置知识，
+    # 绝不能把异常抛给上层导致接口 500 —— 云端通常不安装 RAG 依赖。
+    if not getattr(settings, "rag_enabled", True):
+        return await deepseek.analyze_interactions(medicines)
+
     try:
         query = f"{'、'.join(medicines)} 之间是否存在药物相互作用"
         relevant_docs = _search_relevant_docs(query, n_results=4)
-    except FileNotFoundError as e:
-        # 向量库未构建，机器人在用 DeepSeek 内置知识兜底
+    except Exception as e:
+        print(f"[rag] 向量检索不可用({type(e).__name__}: {e})，改用 LLM 内置知识分析")
         return await deepseek.analyze_interactions(medicines)
 
     # 2. 构造增强 Prompt

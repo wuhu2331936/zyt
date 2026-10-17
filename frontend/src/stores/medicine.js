@@ -14,7 +14,10 @@ export const useMedicineStore = defineStore('medicine', {
   actions: {
     addMedicine(med) {
       const id = 'med_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7)
+      // 注意：必须保留 AI 补全的全部字段（药师叮嘱/成分/不良反应/老年人注意/相互作用/
+      // 漏服/储存），否则识药后加入药箱，详情页的详细说明会全部丢失。
       const item = {
+        ...med,
         id,
         name: med.name || '未知药品',
         spec: med.spec || '',

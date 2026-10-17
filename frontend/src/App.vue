@@ -26,9 +26,12 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useReminderStore } from '@/stores/reminder'
+import { requestNotifyPermission, startReminderWatcher } from '@/utils/reminderWatcher'
 
 const route = useRoute()
 const activeTab = ref(0)
+const reminderStore = useReminderStore()
 
 // 演示模式标记（后端未配置 API Key 时为 true）
 const demoMode = ref(false)
@@ -41,6 +44,14 @@ onMounted(async () => {
     demoMode.value = !!data.demo_mode
   } catch {
     demoMode.value = false
+  }
+
+  // 到点服药提醒：页面内提示 + 系统通知 + 语音播报（全局，任何页面都生效）
+  try {
+    requestNotifyPermission()
+    startReminderWatcher(reminderStore)
+  } catch (e) {
+    console.warn('[reminder] 提醒监听启动失败', e)
   }
 })
 

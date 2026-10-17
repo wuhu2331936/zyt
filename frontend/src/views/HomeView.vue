@@ -52,7 +52,7 @@
         </div>
       </div>
 
-      <!-- 今日提醒 -->
+      <!-- 今日提醒（只展示已启用的；可就地标记已服） -->
       <div class="zyt-card" v-if="todayReminders.length">
         <div class="card-title">
           <van-icon name="alarm-o" color="#f5483b" size="18" />
@@ -65,9 +65,28 @@
         >
           <div class="remind-time">{{ r.time }}</div>
           <div class="remind-name">{{ r.medicineName }}</div>
-          <van-tag :type="r.taken ? 'success' : 'danger'" round>
-            {{ r.taken ? '已服' : '待服' }}
+          <van-tag :type="reminderStore.isTaken(r) ? 'success' : 'danger'" round>
+            {{ reminderStore.isTaken(r) ? '已服' : '待服' }}
           </van-tag>
+          <van-button
+            v-if="!reminderStore.isTaken(r)"
+            size="mini"
+            type="success"
+            round
+            icon="success"
+            @click="markTaken(r.id)"
+          >
+            吃了
+          </van-button>
+          <van-button
+            v-else
+            size="mini"
+            plain
+            round
+            @click="unmarkTaken(r.id)"
+          >
+            撤销
+          </van-button>
         </div>
       </div>
 
@@ -111,13 +130,30 @@
         </van-button>
       </div>
 
+      <!-- 相互作用结果：结构化卡片，不再是一坨纯文本 -->
       <van-dialog
         v-model:show="showInteraction"
         title="⚠️ 药物相互作用"
-        :message="interactionSummary"
         confirm-button-text="知道了"
         close-on-click-overlay
-      />
+      >
+        <div class="risk-box">
+          <p class="risk-summary">{{ interactionSummary }}</p>
+          <div
+            v-for="(r, i) in interactionRisks"
+            :key="i"
+            class="risk-item"
+            :class="'lv-' + r.level"
+          >
+            <div class="risk-head">
+              <span class="risk-level">{{ levelText(r) }}</span>
+              <span class="risk-pair">{{ (r.pair || []).join(' + ') }}</span>
+            </div>
+            <p class="risk-desc">{{ r.description }}</p>
+            <p class="risk-sug">建议：{{ r.suggestion }}</p>
+          </div>
+        </div>
+      </van-dialog>
 
       <div class="bottom-spacer"></div>
     </div>
@@ -142,16 +178,20 @@ const reminderStore = useReminderStore()
 const { medicines } = storeToRefs(medicineStore)
 const { reminders } = storeToRefs(reminderStore)
 
-const todayReminders = computed(() =>
-  reminders.value.filter((r) => r.time && r.medicineName).slice(0, 3)
-)
+// 直接用 store 的 getter：已按 enabled 过滤并按时间排序
+const todayReminders = computed(() => reminderStore.todayReminders)
 
-const pendingCount = computed(
-  () => todayReminders.value.filter((r) => !r.taken).length
-)
-const takenCount = computed(
-  () => todayReminders.value.filter((r) => r.taken).length
-)
+const pendingCount = computed(() => reminderStore.pendingCount)
+const takenCount = computed(() => reminderStore.takenCount)
+
+function markTaken(id) {
+  reminderStore.markTaken(id)
+  showToast('已标记为已服用')
+}
+function unmarkTaken(id) {
+  reminderStore.unmarkTaken(id)
+  showToast('已撤销')
+}
 
 const greeting = computed(() => {
   const h = new Date().getHours()
@@ -165,6 +205,18 @@ const greeting = computed(() => {
 const checking = ref(false)
 const showInteraction = ref(false)
 const interactionSummary = ref('')
+const interactionRisks = ref([])
+
+// 风险等级中文（后端可能没给 level_cn，这里兜底）
+const LEVEL_CN = {
+  critical: '严禁',
+  major: '较严重',
+  moderate: '中等',
+  minor: '轻微',
+}
+function levelText(r) {
+  return r.level_cn || LEVEL_CN[String(r.level || '').toLowerCase()] || '中等'
+}
 
 function goDetail(m) {
   router.push({ path: '/detail', query: { id: m.id } })
@@ -180,19 +232,12 @@ async function checkInteraction() {
   try {
     const names = medicines.value.map((m) => m.name)
     const res = await checkInteractions(names)
-    if (res.has_risk && res.risks.length) {
-      interactionSummary.value =
-        res.summary +
-        '\n\n风险详情：\n' +
-        res.risks
-          .map(
-            (r) =>
-              `·【${r.level.toUpperCase()}】${r.pair.join(' + ')}\n  ${r.description}\n  建议：${r.suggestion}`
-          )
-          .join('\n\n')
-    } else {
-      interactionSummary.value = res.summary || '✅ 未发现明显的药物相互作用风险。'
-    }
+    interactionRisks.value = res.risks || []
+    interactionSummary.value =
+      res.summary ||
+      (interactionRisks.value.length
+        ? '以下组合存在需要注意的相互作用：'
+        : '✅ 未发现明显的药物相互作用风险。')
     showInteraction.value = true
   } catch (e) {
     showToast('检查失败：' + (e.message || '网络异常'))
@@ -388,6 +433,81 @@ onMounted(() => {
 }
 .add-btn {
   margin-left: auto;
+}
+
+/* 相互作用结果卡片 */
+.risk-box {
+  padding: 4px 20px 16px;
+  max-height: 52vh;
+  overflow-y: auto;
+}
+.risk-summary {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #1f2733;
+}
+.risk-item {
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  background: #fff8e6;
+  border-left: 4px solid #ff9f1c;
+}
+.risk-item.lv-critical {
+  background: #fdecea;
+  border-left-color: #ee0a24;
+}
+.risk-item.lv-major {
+  background: #fff1e8;
+  border-left-color: #ff6b35;
+}
+.risk-item.lv-moderate {
+  background: #fff8e6;
+  border-left-color: #ff9f1c;
+}
+.risk-item.lv-minor {
+  background: #f2f8ff;
+  border-left-color: #3b8dff;
+}
+.risk-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.risk-level {
+  flex: none;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background: #ff9f1c;
+}
+.lv-critical .risk-level {
+  background: #ee0a24;
+}
+.lv-major .risk-level {
+  background: #ff6b35;
+}
+.lv-minor .risk-level {
+  background: #3b8dff;
+}
+.risk-pair {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2733;
+}
+.risk-desc,
+.risk-sug {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #4a5568;
+}
+.risk-sug {
+  color: #2f7ef7;
 }
 
 .interaction-btn {

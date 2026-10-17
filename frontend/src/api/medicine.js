@@ -15,8 +15,8 @@ export function recognizeMedicine(file) {
 /**
  * 按药名补全详细用药说明（手动添加的药品也能用）
  */
-export function enrichMedicine({ name, spec, manufacturer }) {
-  return request.post('/medicine/enrich', { name, spec, manufacturer })
+export function enrichMedicine({ name, spec, manufacturer, source }) {
+  return request.post('/medicine/enrich', { name, spec, manufacturer, source })
 }
 
 /**

@@ -26,7 +26,8 @@
             center
           >
             <template #right-icon>
-              <van-switch v-model="r.enabled" @change="toggle(r.id)" />
+              <!-- 只用 v-model：@change 会导致 Vant 先改值、toggle 再翻一次，开关立刻弹回 -->
+              <van-switch v-model="r.enabled" @update:model-value="persist" />
             </template>
           </van-cell>
           <template #right>
@@ -150,6 +151,11 @@ function confirmAdd() {
 
 function toggle(id) {
   reminderStore.toggleReminder(id)
+}
+
+// v-model 已改好值，这里只需落盘（不要再翻转一次，否则开关会弹回）
+function persist() {
+  reminderStore.persist()
 }
 
 function remove(id) {

@@ -64,8 +64,8 @@ import { storeToRefs } from 'pinia'
 import { showToast, showDialog } from 'vant'
 import { useVoiceStore } from '@/stores/voice'
 import { useMedicineStore } from '@/stores/medicine'
-import { voiceChat, textToSpeech } from '@/api/voice'
-import { playAudio, isASRSupported } from '@/utils/audio'
+import { voiceChat } from '@/api/voice'
+import { speakText, isASRSupported } from '@/utils/audio'
 import VoiceButton from '@/components/VoiceButton.vue'
 import EmptyState from '@/components/EmptyState.vue'
 
@@ -119,18 +119,13 @@ async function ask(question) {
     voiceStore.addMessage({
       role: 'assistant',
       content: res.answer,
-      isDemo: res.isDemo,
+      isDemo: res.is_demo ?? res.isDemo,
     })
     scrollToBottom()
 
-    // 自动 TTS 播放
+    // 自动播报：后端 Edge-TTS 优先，不可用则浏览器内置语音兜底
     if (voiceStore.voiceEnabled) {
-      try {
-        const url = await textToSpeech(res.answer)
-        playAudio(url)
-      } catch {
-        // 静默失败
-      }
+      speakText(res.answer, { voice: voiceStore.voice })
     }
   } catch (e) {
     voiceStore.addMessage({ role: 'assistant', content: '抱歉，回答失败，请稍后再试。' })

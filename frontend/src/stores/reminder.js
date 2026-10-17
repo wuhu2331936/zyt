@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { getItem, setItem } from '@/utils/storage'
-import { isToday, today } from '@/utils/time'
+import { today } from '@/utils/time'
 
 const KEY = 'reminders'
 const HISTORY_KEY = 'reminder_history'
@@ -8,13 +8,25 @@ const HISTORY_KEY = 'reminder_history'
 export const useReminderStore = defineStore('reminder', {
   state: () => ({
     reminders: getItem(KEY, []),
-    history: getItem(HISTORY_KEY, {}), // { 'YYYY-MM-DD': [{medicineName, time, taken}] }
+    history: getItem(HISTORY_KEY, {}), // { 'YYYY-MM-DD': [{medicineName, time, takenAt}] }
   }),
   getters: {
+    /** 今日启用的提醒，按时间升序 */
     todayReminders: (s) =>
       s.reminders
-        .filter((r) => r.enabled)
-        .sort((a, b) => a.time.localeCompare(b.time)),
+        .filter((r) => r.enabled && r.time && r.medicineName)
+        .sort((a, b) => String(a.time).localeCompare(String(b.time))),
+
+    /** 是否已服用（用 takenDate 记录，跨天自动失效，无需定时任务清理） */
+    isTaken: (s) => (r) => !!r && r.takenDate === today(),
+
+    /** 今日统计 */
+    pendingCount(s) {
+      return this.todayReminders.filter((r) => !this.isTaken(r)).length
+    },
+    takenCount(s) {
+      return this.todayReminders.filter((r) => this.isTaken(r)).length
+    },
   },
   actions: {
     addReminder(reminder) {
@@ -26,6 +38,7 @@ export const useReminderStore = defineStore('reminder', {
         repeat: reminder.repeat || 'daily',
         voice: reminder.voice || 'zh-CN-XiaoxiaoNeural',
         enabled: true,
+        takenDate: null,
         createdAt: Date.now(),
       })
       this._persist()
@@ -42,10 +55,12 @@ export const useReminderStore = defineStore('reminder', {
       this.reminders = this.reminders.filter((r) => r.id !== id)
       this._persist()
     },
+    /** 标记已服用：写入当日状态 + 追加历史记录 */
     markTaken(id) {
       const r = this.reminders.find((x) => x.id === id)
       if (!r) return
       const dateKey = today()
+      r.takenDate = dateKey
       if (!this.history[dateKey]) this.history[dateKey] = []
       this.history[dateKey].push({
         medicineName: r.medicineName,
@@ -53,9 +68,20 @@ export const useReminderStore = defineStore('reminder', {
         takenAt: Date.now(),
       })
       setItem(HISTORY_KEY, this.history)
+      this._persist()
     },
-    checkAndMarkTaken() {
-      // 仅占位：实际由插件前端负责调用 scheduleReminder
+    /** 取消已服用标记（误触可撤销） */
+    unmarkTaken(id) {
+      const r = this.reminders.find((x) => x.id === id)
+      if (!r) return
+      r.takenDate = null
+      this._persist()
+    },
+    /** 兼容旧调用：真正的到点提醒由 utils/reminderWatcher.js 全局定时触发 */
+    checkAndMarkTaken() {},
+    /** 外部直接改了 enabled 等字段后手动落盘（v-model 直改 store 不会自动持久化） */
+    persist() {
+      this._persist()
     },
     _persist() {
       setItem(KEY, this.reminders)

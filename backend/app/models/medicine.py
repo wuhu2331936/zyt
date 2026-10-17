@@ -59,8 +59,9 @@ class InteractionRisk(BaseModel):
     """单条风险项"""
     pair: list[str] = Field(..., description="互相作用的两药")
     level: Literal["critical", "major", "moderate", "minor"] = Field(
-        ..., description="风险等级"
+        ..., description="风险等级（英文枚举）"
     )
+    level_cn: Optional[str] = Field(None, description="风险等级中文：严禁/较严重/中等/轻微")
     description: str = Field(..., description="风险描述")
     suggestion: str = Field(..., description="建议措施")
 

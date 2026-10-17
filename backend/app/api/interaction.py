@@ -12,6 +12,18 @@ from app.services import rag
 
 router = APIRouter()
 
+# 后端/前端都可能拿到英文枚举，这里兜底补中文（模型偶尔不返回 level_cn）
+_LEVEL_CN = {
+    "critical": "严禁",
+    "major": "较严重",
+    "moderate": "中等",
+    "minor": "轻微",
+}
+
+
+def _level_cn(level: str) -> str:
+    return _LEVEL_CN.get(str(level).lower(), "中等")
+
 
 @router.post("/check", response_model=InteractionResponse, summary="检查多种药物相互作用")
 async def check_interaction(req: InteractionRequest):
@@ -36,10 +48,14 @@ async def check_interaction(req: InteractionRequest):
     risks: list[InteractionRisk] = []
     for r in result.get("risks", []):
         try:
+            # 模型偶尔返回 high/severe 等非法枚举，先归一化，否则整条风险会被丢弃
+            raw_level = str(r.get("level", "moderate")).lower()
+            level = raw_level if raw_level in _LEVEL_CN else "moderate"
             risks.append(
                 InteractionRisk(
-                    pair=r.get("pair", []),
-                    level=r.get("level", "moderate"),
+                    pair=r.get("pair", []) or [],
+                    level=level,
+                    level_cn=r.get("level_cn") or _level_cn(level),
                     description=r.get("description", ""),
                     suggestion=r.get("suggestion", ""),
                 )
