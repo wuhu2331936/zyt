@@ -1,21 +1,171 @@
-/* 全局基础样式 - 大字体适配老年用户 */
+/* ===========================================================
+   智药通 全局主题 - 老年人友好：大字号 / 高对比 / 大间距
+   =========================================================== */
+
+:root {
+  /* 品牌色：医疗蓝 + 青绿辅助 */
+  --zyt-primary: #2f7ef7;
+  --zyt-primary-dark: #1a63d8;
+  --zyt-mint: #22c1a4;
+  --zyt-warn: #ff9500;
+  --zyt-danger: #f5483b;
+  --zyt-gradient: linear-gradient(135deg, #3b8dff 0%, #22c1a4 100%);
+  --zyt-gradient-warm: linear-gradient(135deg, #ffb648 0%, #ff8a3d 100%);
+
+  --zyt-bg: #f2f6fb;
+  --zyt-card: #ffffff;
+  --zyt-text: #1f2733;
+  --zyt-text-sub: #6b7787;
+  --zyt-radius: 16px;
+  --zyt-shadow: 0 6px 20px rgba(31, 45, 61, 0.07);
+  --zyt-shadow-lg: 0 12px 30px rgba(47, 126, 247, 0.18);
+}
+
+/* --- Vant 主题变量覆盖 --- */
+:root {
+  --van-primary-color: var(--zyt-primary);
+  --van-blue: var(--zyt-primary);
+  --van-green: var(--zyt-mint);
+  --van-orange: var(--zyt-warn);
+  --van-red: var(--zyt-danger);
+  --van-gray-1: #f2f6fb;
+  --van-gray-6: #97a1b0;
+  --van-gray-7: #6b7787;
+  --van-gray-8: #1f2733;
+  --van-nav-bar-background-color: var(--zyt-gradient);
+  --van-nav-bar-title-text-color: #ffffff;
+  --van-nav-bar-icon-color: #ffffff;
+  --van-nav-bar-title-font-size: 18px;
+  --van-tabbar-item-active-color: var(--zyt-primary);
+  --van-tabbar-item-text-color: #97a1b0;
+  --van-tabbar-item-font-size: 13px;
+  --van-cell-font-size: 16px;
+  --van-cell-vertical-padding: 14px;
+  --van-button-default-height: 46px;
+  --van-button-large-height: 52px;
+  --van-button-font-size: 17px;
+  --van-tag-font-size: 13px;
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
   font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    'Helvetica Neue',
-    'PingFang SC',
-    'Microsoft YaHei',
-    sans-serif;
+    -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC',
+    'Microsoft YaHei', sans-serif;
   font-size: 16px;
-  background: #f7f8fa;
-  color: #333;
+  color: var(--zyt-text);
+  background: var(--zyt-bg);
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
 * {
   box-sizing: border-box;
+}
+
+/* 页面整体留白 */
+.page {
+  padding: 12px 12px 90px;
+}
+
+/* --- 通用卡片 --- */
+.zyt-card {
+  background: var(--zyt-card);
+  border-radius: var(--zyt-radius);
+  box-shadow: var(--zyt-shadow);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+/* Vant 内置组件统一圆角与阴影 */
+.van-cell-group--inset {
+  border-radius: var(--zyt-radius) !important;
+  overflow: hidden;
+  box-shadow: var(--zyt-shadow);
+  margin-bottom: 14px;
+}
+
+.van-cell {
+  font-size: 16px;
+}
+
+.van-cell__title {
+  color: var(--zyt-text);
+}
+
+.van-cell__value {
+  color: var(--zyt-text-sub);
+}
+
+.van-button--primary {
+  background: var(--zyt-gradient);
+  border: none;
+  box-shadow: 0 6px 16px rgba(47, 126, 247, 0.28);
+}
+
+.van-button--success {
+  background: linear-gradient(135deg, #2fd6b4 0%, #16a88e 100%);
+  border: none;
+}
+
+.van-button--warning {
+  background: var(--zyt-gradient-warm);
+  border: none;
+  box-shadow: 0 6px 16px rgba(255, 138, 61, 0.28);
+}
+
+.van-button--round {
+  border-radius: 999px;
+}
+
+/* 顶部导航渐变 */
+.van-nav-bar {
+  background: linear-gradient(135deg, #3b8dff 0%, #22c1a4 100%);
+  box-shadow: 0 4px 14px rgba(47, 126, 247, 0.22);
+}
+.van-nav-bar .van-nav-bar__title,
+.van-nav-bar .van-icon {
+  color: #fff !important;
+}
+.van-nav-bar::after {
+  display: none;
+}
+
+/* 底部导航 */
+.van-tabbar {
+  box-shadow: 0 -4px 18px rgba(31, 45, 61, 0.08);
+  padding-top: 4px;
+}
+
+.van-tabbar-item--active {
+  font-weight: 600;
+}
+
+/* 弹窗/吐司字号放大 */
+.van-dialog__message {
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.van-toast {
+  font-size: 16px;
+}
+
+/* 空状态 */
+.zyt-empty {
+  text-align: center;
+  padding: 36px 20px;
+  color: var(--zyt-text-sub);
+}
+
+.zyt-empty__icon {
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.zyt-empty__text {
+  font-size: 16px;
 }

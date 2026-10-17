@@ -174,8 +174,14 @@ onMounted(() => {
   padding: 12px;
 }
 .section-title {
-  margin: 20px 12px 8px;
-  font-size: 16px;
+  margin: 18px 12px 10px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1f2733;
+}
+.popup h3 {
+  font-size: 18px;
+  font-weight: 700;
 }
 .popup {
   padding: 16px;

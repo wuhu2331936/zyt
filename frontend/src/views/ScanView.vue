@@ -9,6 +9,14 @@
         <p>AI 自动识别药品名、规格、用法用量</p>
       </div>
 
+      <div class="upload-zone" @click="pickImage">
+        <div class="upload-inner">
+          <div class="upload-emoji">🖼️</div>
+          <b>点击选择 / 拍摄照片</b>
+          <span>支持 JPG、PNG，单张即可</span>
+        </div>
+      </div>
+
       <van-uploader
         v-model="fileList"
         :after-read="afterRead"
@@ -16,6 +24,7 @@
         accept="image/*"
         :preview-image="false"
         class="uploader"
+        ref="uploaderRef"
       >
         <template #default>
           <van-button icon="plus" type="primary" round block size="large">
@@ -78,6 +87,13 @@ const medicineStore = useMedicineStore()
 const fileList = ref([])
 const loading = ref(false)
 const result = ref(null)
+const uploaderRef = ref(null)
+
+// 点击自定义上传区 -> 触发 Vant Uploader 的隐藏 input
+function pickImage() {
+  const el = uploaderRef.value?.$el?.querySelector?.('input[type=file]')
+  if (el) el.click()
+}
 
 async function afterRead(file) {
   // file.file 是浏览器 File 对象
@@ -119,24 +135,70 @@ function addToList() {
 }
 .hero {
   text-align: center;
-  padding: 20px 0;
+  padding: 8px 0 4px;
 }
 .hero-icon {
-  font-size: 56px;
+  width: 84px;
+  height: 84px;
+  margin: 0 auto;
+  border-radius: 26px;
+  background: linear-gradient(135deg, #3b8dff 0%, #22c1a4 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  box-shadow: 0 10px 24px rgba(47, 126, 247, 0.28);
 }
 .hero h2 {
-  margin: 12px 0 6px;
+  margin: 14px 0 6px;
   font-size: 20px;
+  font-weight: 700;
+  color: #1f2733;
 }
 .hero p {
   margin: 0;
-  color: #666;
+  color: #6b7787;
+  font-size: 15px;
 }
+
+/* 自定义虚线上传区 */
+.upload-zone {
+  margin: 18px 0 12px;
+  border: 2px dashed #b9cdf5;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #f5f9ff 0%, #f1fbf8 100%);
+  padding: 26px 16px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.upload-zone:active {
+  transform: scale(0.985);
+}
+.upload-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.upload-emoji {
+  font-size: 34px;
+}
+.upload-inner b {
+  font-size: 17px;
+  color: #1f2733;
+}
+.upload-inner span {
+  font-size: 13px;
+  color: #97a1b0;
+}
+
+/* 隐藏 Vant 原生选择按钮（保留功能，用自定义区触发） */
 .uploader {
-  margin: 16px 0;
+  height: 0;
+  overflow: hidden;
 }
 .tips {
-  margin-top: 16px;
+  margin-top: 8px;
 }
 .result {
   margin-top: 24px;

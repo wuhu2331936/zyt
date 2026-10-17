@@ -139,7 +139,7 @@ function confirmClear() {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f7f8fa;
+  background: var(--zyt-bg);
 }
 .chat-area {
   flex: 1;
@@ -166,13 +166,22 @@ function confirmClear() {
   word-break: break-word;
 }
 .msg.user .bubble {
-  background: #1989fa;
+  background: linear-gradient(135deg, #3b8dff 0%, #2f7ef7 100%);
   color: #fff;
+  border-bottom-right-radius: 6px;
+  box-shadow: 0 6px 16px rgba(47, 126, 247, 0.22);
 }
 .msg.assistant .bubble {
   background: #fff;
-  color: #333;
-  border: 1px solid #eee;
+  color: #1f2733;
+  border-bottom-left-radius: 6px;
+  box-shadow: 0 6px 18px rgba(31, 45, 61, 0.08);
+}
+.bubble.loading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6b7787;
 }
 .input-area {
   padding: 12px 12px env(safe-area-inset-bottom);
@@ -185,8 +194,8 @@ function confirmClear() {
 }
 .input-area :deep(.van-field) {
   width: 100%;
-  background: #f5f5f5;
-  border-radius: 20px;
+  background: #f2f6fb;
+  border-radius: 22px;
   padding: 4px 12px;
 }
 .footer-tip {

@@ -92,15 +92,33 @@ function confirmRemove() {
   padding-top: 46px;
 }
 .content {
-  padding: 16px;
+  padding: 12px 12px 90px;
 }
 .hero {
   text-align: center;
-  padding: 20px 0;
+  padding: 22px 16px;
+  background: linear-gradient(135deg, #3b8dff 0%, #22c1a4 100%);
+  border-radius: 20px;
+  color: #fff;
+  box-shadow: 0 12px 28px rgba(47, 126, 247, 0.28);
+  margin-bottom: 14px;
 }
 .hero h1 {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   font-size: 24px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.hero :deep(.van-tag) {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.18);
+}
+.text-block {
+  font-size: 16px;
+}
+.text-block.warn {
+  color: #f5483b;
 }
 .text-block {
   padding: 12px 16px;
