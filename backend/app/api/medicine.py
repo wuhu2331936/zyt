@@ -3,8 +3,8 @@ from __future__ import annotations
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
-from app.models.medicine import RecognizeResponse
-from app.services import qwen_vl
+from app.models.medicine import EnrichRequest, MedicineInfo, RecognizeResponse
+from app.services import medicine_knowledge, qwen_vl
 
 router = APIRouter()
 
@@ -16,7 +16,12 @@ MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 async def recognize_medicine(
     file: UploadFile = File(..., description="药盒照片，jpg/png/webp"),
 ):
-    """接收药盒图片 → 调用通义千问 VL → 返回结构化药品信息
+    """接收药盒图片 → 通义千问 VL 读药盒 → DeepSeek 补全说明书级解读
+
+    两阶段：
+    1. qwen_vl：看图识字，拿到真实药名/规格/厂家（药盒上有什么读什么，不臆测）
+    2. medicine_knowledge：按药名补适应症、不良反应、禁忌、老年人注意、相互作用、
+       漏服处理、储存与大白话总结，让结果接近一份用药说明书
 
     前端调用：在「拍照识药页」上传/拍摄后调用此接口。
     """
@@ -50,4 +55,33 @@ async def recognize_medicine(
             error="未能识别出药品信息，请上传更清晰的药盒正面照",
         )
 
+    # 第二阶段：按药名补全说明书级解读（失败也不影响识药结果）
+    try:
+        medicine = await medicine_knowledge.enrich_medicine(medicine)
+    except Exception as e:
+        print(f"[api/medicine] 知识补全异常({e})，返回药盒识别结果")
+
     return RecognizeResponse(success=True, medicine=medicine)
+
+
+@router.post("/enrich", response_model=MedicineInfo, summary="按药名补全详细用药说明")
+async def enrich_medicine_info(req: EnrichRequest):
+    """给已有药品（尤其是手动添加的）补一份说明书级解读
+
+    前端：药品详情页在缺少详细说明时点「生成详细用药说明」调用。
+    """
+    med = MedicineInfo(
+        name=req.name,
+        spec=req.spec,
+        manufacturer=req.manufacturer,
+        source="search",
+    )
+    try:
+        med = await medicine_knowledge.enrich_medicine(med)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"生成用药说明失败: {e}")
+
+    if not med.summary and not med.indications:
+        raise HTTPException(status_code=502, detail="未能生成该药品的说明，请检查药品名是否准确")
+
+    return med

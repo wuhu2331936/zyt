@@ -42,7 +42,7 @@
 
       <!-- 识别中 loading -->
       <van-loading v-if="loading" type="circular" size="36" vertical>
-        AI 正在识别药盒...
+        正在识别药盒并生成用药说明...
       </van-loading>
 
       <!-- 识别结果 -->
@@ -57,6 +57,12 @@
           <van-cell v-if="result.medicine.contraindications" title="禁忌" :value="result.medicine.contraindications" />
           <van-cell v-if="result.medicine.remarks" title="备注" :value="result.medicine.remarks" />
         </van-cell-group>
+
+        <div v-if="result.medicine.summary" class="summary-block">
+          <h4>💬 药师叮嘱</h4>
+          <p>{{ result.medicine.summary }}</p>
+          <span class="more">加入药箱后可在详情页查看完整用药说明</span>
+        </div>
 
         <van-button
           type="success"
@@ -215,5 +221,28 @@ function addToList() {
 .result h3 {
   margin: 0 0 12px;
   font-size: 18px;
+}
+.summary-block {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #eef6ff 0%, #e6f7f2 100%);
+  border-radius: 16px;
+}
+.summary-block h4 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #1f2733;
+}
+.summary-block p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #2b3440;
+}
+.summary-block .more {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #8a94a6;
 }
 </style>

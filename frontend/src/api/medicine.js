@@ -13,6 +13,13 @@ export function recognizeMedicine(file) {
 }
 
 /**
+ * 按药名补全详细用药说明（手动添加的药品也能用）
+ */
+export function enrichMedicine({ name, spec, manufacturer }) {
+  return request.post('/medicine/enrich', { name, spec, manufacturer })
+}
+
+/**
  * 检查药物相互作用
  * @param {string[]} medicines - 药品通用名列表
  */

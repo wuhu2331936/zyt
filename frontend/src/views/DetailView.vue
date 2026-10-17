@@ -22,17 +22,60 @@
         </van-cell>
       </van-cell-group>
 
+      <van-cell-group inset title="药师叮嘱" v-if="medicine.summary">
+        <div class="text-block summary">
+          <van-icon name="volume-o" /> {{ medicine.summary }}
+        </div>
+      </van-cell-group>
+
       <van-cell-group inset title="适应症" v-if="medicine.indications">
         <div class="text-block">{{ medicine.indications }}</div>
+      </van-cell-group>
+
+      <van-cell-group inset title="主要成分" v-if="medicine.ingredients">
+        <div class="text-block">{{ medicine.ingredients }}</div>
+      </van-cell-group>
+
+      <van-cell-group inset title="不良反应" v-if="medicine.adverse_reactions">
+        <div class="text-block">{{ medicine.adverse_reactions }}</div>
       </van-cell-group>
 
       <van-cell-group inset title="禁忌" v-if="medicine.contraindications">
         <div class="text-block warn">{{ medicine.contraindications }}</div>
       </van-cell-group>
 
+      <van-cell-group inset title="老年人特别注意" v-if="medicine.elderly_notes">
+        <div class="text-block elder">{{ medicine.elderly_notes }}</div>
+      </van-cell-group>
+
+      <van-cell-group inset title="与其他药的相互作用" v-if="medicine.interactions">
+        <div class="text-block warn">{{ medicine.interactions }}</div>
+      </van-cell-group>
+
+      <van-cell-group inset title="漏服了怎么办" v-if="medicine.missed_dose">
+        <div class="text-block">{{ medicine.missed_dose }}</div>
+      </van-cell-group>
+
+      <van-cell-group inset title="怎么保存" v-if="medicine.storage">
+        <div class="text-block">{{ medicine.storage }}</div>
+      </van-cell-group>
+
       <van-cell-group inset title="备注" v-if="medicine.remarks">
         <div class="text-block">{{ medicine.remarks }}</div>
       </van-cell-group>
+
+      <div class="action-bar" v-if="!medicine.summary">
+        <van-button
+          type="primary"
+          block
+          round
+          icon="search"
+          :loading="enriching"
+          @click="doEnrich"
+        >
+          AI 生成详细用药说明
+        </van-button>
+      </div>
 
       <div class="action-bar">
         <van-button type="primary" round icon="clock-o" @click="goReminder">
@@ -47,11 +90,12 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { showDialog, showToast } from 'vant'
 import { storeToRefs } from 'pinia'
 import { useMedicineStore } from '@/stores/medicine'
+import { enrichMedicine } from '@/api/medicine'
 import EmptyState from '@/components/EmptyState.vue'
 
 const route = useRoute()
@@ -71,6 +115,27 @@ const sourceLabel = computed(() => {
 const sourceType = computed(() =>
   medicine.value?.source === 'demo' ? 'warning' : 'primary'
 )
+
+const enriching = ref(false)
+
+async function doEnrich() {
+  const m = medicine.value
+  if (!m) return
+  enriching.value = true
+  try {
+    const detail = await enrichMedicine({
+      name: m.name,
+      spec: m.spec,
+      manufacturer: m.manufacturer,
+    })
+    medicineStore.updateMedicine(m.id, detail)
+    showToast('已生成详细用药说明')
+  } catch (e) {
+    showToast('生成失败，请稍后再试')
+  } finally {
+    enriching.value = false
+  }
+}
 
 function goReminder() {
   router.push({ path: '/reminder', query: { medName: medicine.value.name } })
@@ -132,6 +197,20 @@ function confirmRemove() {
 }
 .text-block.warn {
   color: #ee0a24;
+}
+.text-block.summary {
+  background: linear-gradient(135deg, #eef6ff 0%, #e6f7f2 100%);
+  border-radius: 14px;
+  margin: 10px 12px;
+  color: #1f2733;
+  font-size: 16px;
+  font-weight: 500;
+}
+.text-block.elder {
+  color: #ff8f1f;
+  background: #fff8ee;
+  border-radius: 14px;
+  margin: 10px 12px;
 }
 .action-bar {
   padding: 16px;

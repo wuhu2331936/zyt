@@ -15,6 +15,14 @@ class MedicineInfo(BaseModel):
     indications: Optional[str] = Field(None, description="适应症")
     contraindications: Optional[str] = Field(None, description="禁忌")
     remarks: Optional[str] = Field(None, description="备注/警告")
+    # ====== 知识补全字段（第二阶段由 DeepSeek 按药名生成，说明书级解读）======
+    ingredients: Optional[str] = Field(None, description="主要成分 / 常见商品名")
+    adverse_reactions: Optional[str] = Field(None, description="不良反应")
+    elderly_notes: Optional[str] = Field(None, description="老年人用药特别注意")
+    interactions: Optional[str] = Field(None, description="与常见慢病药的相互作用提醒")
+    missed_dose: Optional[str] = Field(None, description="漏服怎么办")
+    storage: Optional[str] = Field(None, description="贮藏方式")
+    summary: Optional[str] = Field(None, description="大白话总结（药师口吻，≤120字）")
     source: Literal["vl", "manual", "search", "demo"] = Field(
         "vl",
         description="数据来源：vl=拍照识别(真实调用成功), manual=手动添加, search=搜索, "
@@ -31,6 +39,13 @@ class RecognizeResponse(BaseModel):
 
 
 # ========== 药物相互作用 ==========
+
+class EnrichRequest(BaseModel):
+    """按药名补全用药说明的请求（手动添加的药品也可调用）"""
+    name: str = Field(..., min_length=1, description="药品名称")
+    spec: Optional[str] = Field(None, description="规格")
+    manufacturer: Optional[str] = Field(None, description="生产厂家")
+
 
 class InteractionRequest(BaseModel):
     """相互作用检查请求"""
