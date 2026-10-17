@@ -48,7 +48,7 @@
         :on-error="onVoiceError"
       />
       <p v-else class="asr-unsupported">
-        当前浏览器不支持语音识别（仅 Chrome / Edge / Safari 可用），请直接在上方输入文字提问
+        {{ asrUnsupportedTip }}
       </p>
       <p class="footer-tip">
         <van-icon name="info-o" />
@@ -59,13 +59,13 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import { showToast, showDialog } from 'vant'
 import { useVoiceStore } from '@/stores/voice'
 import { useMedicineStore } from '@/stores/medicine'
 import { voiceChat } from '@/api/voice'
-import { speakText, isASRSupported } from '@/utils/audio'
+import { speakText, isASRSupported, canRecordAudio, isSecureContext, unlockSpeech } from '@/utils/audio'
 import { mdToHtml } from '@/utils/markdown'
 import VoiceButton from '@/components/VoiceButton.vue'
 import EmptyState from '@/components/EmptyState.vue'
@@ -78,8 +78,18 @@ const { medicines } = storeToRefs(medicineStore)
 const textInput = ref('')
 const loading = ref(false)
 const chatArea = ref(null)
-// QQ 浏览器 / 微信内置浏览器不支持 Web Speech API，提前判断避免按钮点了没反应
+// 语音输入走「录音上传 + 服务端识别」，不再依赖浏览器自带识别
+// （国内 Android Chrome 的自带识别走 Google 服务器，连不通；微信内置浏览器没有该 API）
 const asrSupported = ref(isASRSupported())
+const asrUnsupportedTip = computed(() => {
+  if (!canRecordAudio()) {
+    return '当前浏览器不支持录音，请直接在上方输入文字提问'
+  }
+  if (!isSecureContext()) {
+    return '录音需要 HTTPS 环境（或 localhost），请用 https 地址打开后再试'
+  }
+  return '语音输入暂不可用，请直接在上方输入文字提问'
+})
 
 function scrollToBottom() {
   nextTick(() => {
@@ -93,11 +103,17 @@ async function sendText() {
   const text = textInput.value.trim()
   if (!text) return
   textInput.value = ''
+  // 借用户点击的时机解锁 iOS 语音播报（await 之后再 speak 会被系统忽略）
+  unlockSpeech()
   await ask(text)
 }
 
-async function onVoiceResult(text) {
+async function onVoiceResult(text, meta) {
   if (!text) return
+  // 演示模式（未配置语音识别 Key）下填的是预置问句，明确告知，避免误以为真听到了
+  if (meta?.isDemo) {
+    showToast('演示模式：已填入示例问题')
+  }
   await ask(text)
 }
 

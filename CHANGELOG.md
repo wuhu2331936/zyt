@@ -4,6 +4,21 @@
 
 ## [Unreleased]
 
+### 🐛 Fix - 手机端语音输入不可用（真机根因修复）
+- 根因：浏览器原生 Web Speech API 在 Android Chrome/Edge 上把录音送到 Google 服务器，
+  国内网络连不通（报错 `network`）；微信 / QQ / UC 内置浏览器没有该 API；iOS WKWebView 同样不可用。
+  由于能力检测返回 `true`，表现为「按钮能点但永远没结果」，容易被误判成代码缺陷。
+- 新增服务端识别：`POST /api/voice/asr` + `backend/app/services/asr.py`
+  （阿里云百炼 Paraformer，模型三级回退 + OpenAI 兼容接口兜底）。
+- 前端改为 Web Audio 采集 PCM → 16kHz WAV → 上传（统一格式，云端镜像无需 ffmpeg）。
+- 修复 AudioContext 创建顺序：必须先 `getUserMedia()` 再 `new AudioContext()`，
+  否则 `onaudioprocess` 一次都不触发（实测 3 秒 0 帧 → 11 帧）。
+- 新增 iOS 音频解锁（`unlockAudio` / `unlockSpeech`）：必须在用户手势同步栈内解锁，
+  否则 `await` 之后创建的上下文停在 `suspended`，表现是「按了没反应 / 手机不出声」。
+- 新增静音早退（振幅 < 0.008 直接提示「没听到声音」）、录音 60 秒上限、
+  权限被拒与非 HTTPS 场景的针对性提示。
+- 演示模式（未配置 Key）返回预置问句并 Toast 提示，评审无需密钥也能走通。
+
 ### 阶段 6 - 比赛材料准备
 - 撰写最终版 README.md（含 logo + 功能演示 + 快速开始 + 评分对应）
 - 完善演示视频脚本（5-8 分钟分镜 + 对白 + 字幕 + 镜头语言）

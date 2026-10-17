@@ -1,16 +1,48 @@
-"""语音问答 + TTS 路由"""
+"""语音问答 + TTS + ASR 路由"""
 from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import Response
+from pydantic import BaseModel
 
 from app.models.medicine import ChatRequest, ChatResponse, TTSRequest
-from app.services import deepseek, tts
+from app.services import asr, deepseek, tts
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+# 单次录音上限：16kHz/16bit 单声道约 2 分钟，正常人问一句话远小于此
+MAX_ASR_BYTES = 4 * 1024 * 1024  # 4MB
+
+
+class ASRResponse(BaseModel):
+    text: str
+    is_demo: bool = False
+
+
+@router.post("/asr", response_model=ASRResponse, summary="语音转文字（阿里云百炼 Paraformer）")
+async def speech_to_text(file: UploadFile = File(...)):
+    """接收前端录的音频 → 返回识别文本
+
+    存在的意义：浏览器原生 Web Speech API 在国内手机上不可用
+    （Chrome 的识别走 Google 服务器，国内连不通；微信内置浏览器干脆没有这个 API），
+    所以语音输入统一走服务端识别。
+    """
+    data = await file.read()
+    if len(data) > MAX_ASR_BYTES:
+        raise HTTPException(status_code=413, detail="录音太长，请控制在 2 分钟内")
+
+    try:
+        text, is_demo = await asr.transcribe(data, file.filename or "audio.wav")
+    except asr.ASRError as e:
+        logger.warning("[asr] 识别失败: %s", e)
+        raise HTTPException(status_code=503, detail=f"语音识别失败：{e}")
+
+    if not text:
+        raise HTTPException(status_code=422, detail="没听清，请再说一次")
+    return ASRResponse(text=text, is_demo=is_demo)
 
 
 @router.post("/chat", response_model=ChatResponse, summary="用药问答（DeepSeek）")
