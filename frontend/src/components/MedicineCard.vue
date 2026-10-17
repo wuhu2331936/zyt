@@ -1,7 +1,7 @@
 <template>
   <div class="med-card" @click="$emit('click', medicine)">
-    <div class="med-icon" :class="medicine.source === 'vl' ? 'vl' : 'manual'">
-      {{ medicine.source === 'vl' ? '📷' : '✍️' }}
+    <div class="med-icon" :class="iconClass">
+      {{ iconEmoji }}
     </div>
 
     <div class="med-body">
@@ -11,9 +11,7 @@
       </div>
       <p class="med-desc">{{ desc }}</p>
       <div class="med-tags">
-        <van-tag :type="medicine.source === 'vl' ? 'primary' : 'success'" plain round>
-          {{ medicine.source === 'vl' ? '拍照识别' : '手动添加' }}
-        </van-tag>
+        <van-tag :type="tagType" plain round>{{ tagText }}</van-tag>
       </div>
     </div>
   </div>
@@ -32,6 +30,32 @@ const desc = computed(() => {
   if (props.medicine.spec) parts.push(props.medicine.spec)
   if (props.medicine.usage) parts.push(props.medicine.usage)
   return parts.join(' · ') || '点击查看详情'
+})
+
+// source: vl=真实识别 / manual=手动 / search=搜索 / demo=演示兜底（必须如实标注，不能冒充真实识别）
+const iconClass = computed(() => {
+  const s = props.medicine.source
+  if (s === 'vl' || s === 'search') return 'vl'
+  if (s === 'demo') return 'demo'
+  return 'manual'
+})
+
+const iconEmoji = computed(() => {
+  const s = props.medicine.source
+  if (s === 'demo') return '🎭'
+  if (s === 'vl' || s === 'search') return '📷'
+  return '✍️'
+})
+
+const tagText = computed(() => {
+  const map = { vl: '拍照识别', manual: '手动添加', search: '搜索', demo: '示例数据' }
+  return map[props.medicine.source] || '手动添加'
+})
+
+const tagType = computed(() => {
+  const s = props.medicine.source
+  if (s === 'demo') return 'warning'
+  return s === 'vl' || s === 'search' ? 'primary' : 'success'
 })
 </script>
 
@@ -65,6 +89,9 @@ const desc = computed(() => {
 }
 .med-icon.manual {
   background: linear-gradient(135deg, #e0f8f1 0%, #d2f3ea 100%);
+}
+.med-icon.demo {
+  background: linear-gradient(135deg, #fff4e0 0%, #ffe9c2 100%);
 }
 .med-body {
   flex: 1;

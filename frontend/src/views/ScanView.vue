@@ -104,7 +104,16 @@ async function afterRead(file) {
     const res = await recognizeMedicine(file.file)
     if (res.success && res.medicine) {
       result.value = res
-      showToast('识别成功')
+      if (res.medicine.source === 'demo') {
+        // 兜底/演示数据：必须说清楚，否则用户会当成真实识别结果，用药安全风险极大
+        showToast({
+          type: 'warning',
+          duration: 3000,
+          message: 'AI 识药不可用，当前为示例数据，请手动核对药名',
+        })
+      } else {
+        showToast('识别成功')
+      }
     } else {
       showDialog({
         title: '识别失败',

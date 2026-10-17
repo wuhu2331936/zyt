@@ -15,8 +15,10 @@ class MedicineInfo(BaseModel):
     indications: Optional[str] = Field(None, description="适应症")
     contraindications: Optional[str] = Field(None, description="禁忌")
     remarks: Optional[str] = Field(None, description="备注/警告")
-    source: Literal["vl", "manual", "search"] = Field(
-        "vl", description="数据来源：vl=拍照识别, manual=手动, search=搜索"
+    source: Literal["vl", "manual", "search", "demo"] = Field(
+        "vl",
+        description="数据来源：vl=拍照识别(真实调用成功), manual=手动添加, search=搜索, "
+        "demo=演示/兜底示例数据（未配 Key 或真实调用失败，界面须明确标注，不可冒充 vl）",
     )
 
 

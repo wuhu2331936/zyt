@@ -1,0 +1,1 @@
+import{r as n}from"./request-DHof8Mxm.js";function o(e){const t=new FormData;return t.append("file",e),n.post("/medicine/recognize",t,{headers:{"Content-Type":"multipart/form-data"}})}function c(e){return n.post("/interaction/check",{medicines:e})}export{c,o as r};

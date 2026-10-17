@@ -9,7 +9,7 @@
     <div v-else class="content">
       <div class="hero">
         <h1>{{ medicine.name }}</h1>
-        <van-tag plain type="primary">{{ sourceLabel }}</van-tag>
+        <van-tag plain :type="sourceType">{{ sourceLabel }}</van-tag>
       </div>
 
       <van-cell-group inset title="基本信息">
@@ -64,9 +64,13 @@ const medicine = computed(() =>
 )
 
 const sourceLabel = computed(() => {
-  const map = { vl: '拍照识别', manual: '手动添加', search: '搜索' }
+  const map = { vl: '拍照识别', manual: '手动添加', search: '搜索', demo: '示例数据（非真实识别）' }
   return map[medicine.value?.source] || ''
 })
+
+const sourceType = computed(() =>
+  medicine.value?.source === 'demo' ? 'warning' : 'primary'
+)
 
 function goReminder() {
   router.push({ path: '/reminder', query: { medName: medicine.value.name } })
