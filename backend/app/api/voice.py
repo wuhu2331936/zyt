@@ -17,7 +17,7 @@ async def voice_chat(req: ChatRequest):
     前端流程：按住说话 → Web Speech API / 讯飞 ASR 转文字 → 调此接口 → 用 Edge-TTS 播报
     """
     try:
-        answer = await deepseek.chat(
+        answer, is_demo = await deepseek.chat_with_meta(
             question=req.question,
             medicine_context=req.medicine_context,
             history=req.history,
@@ -27,7 +27,7 @@ async def voice_chat(req: ChatRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"对话服务失败: {e}")
 
-    return ChatResponse(answer=answer)
+    return ChatResponse(answer=answer, is_demo=is_demo)
 
 
 @router.post("/tts", summary="文字转语音（Edge-TTS）")

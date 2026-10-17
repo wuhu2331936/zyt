@@ -102,12 +102,12 @@ SYSTEM_PROMPT = """你是一名耐心的社区医院药师，正在和一位老�
 - 涉及急症请建议立即拨打 120。"""
 
 
-async def chat(
+async def chat_with_meta(
     question: str,
     medicine_context: list[str] | None = None,
     history: list[dict[str, str]] | None = None,
-) -> str:
-    """与 DeepSeek 对话
+) -> tuple[str, bool]:
+    """与 DeepSeek 对话，并明确告知本次回答是否为演示兜底内容
 
     Args:
         question: 用户问题
@@ -115,10 +115,11 @@ async def chat(
         history: 对话历史 [{"role":"user/assistant","content":"..."}]
 
     Returns:
-        模型回答文本
+        (回答文本, 是否演示兜底) —— 第二项为 True 时界面必须标注，
+        否则用户会把关键词模板答案当成 AI 真实回答（用药安全场景不可接受）。
     """
     if _is_demo():
-        return _demo_answer(question)
+        return _demo_answer(question), True
 
     client = _get_client()
 
@@ -151,10 +152,23 @@ async def chat(
             temperature=0.3,
             max_tokens=600,
         )
-        return response.choices[0].message.content or ""
+        return response.choices[0].message.content or "", False
     except Exception as e:  # 余额不足 / 网络异常 / 模型不可用，均降级保证演示不中断
         print(f"[deepseek] 调用失败({e})，已降级为演示回答")
-        return _demo_answer(question)
+        return _demo_answer(question), True
+
+
+async def chat(
+    question: str,
+    medicine_context: list[str] | None = None,
+    history: list[dict[str, str]] | None = None,
+) -> str:
+    """与 DeepSeek 对话（兼容旧签名，只返回文本）
+
+    需要区分真实/演示回答时请用 chat_with_meta()。
+    """
+    answer, _ = await chat_with_meta(question, medicine_context, history)
+    return answer
 
 
 def _safe_json_loads(text: str) -> dict:

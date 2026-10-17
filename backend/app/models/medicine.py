@@ -70,6 +70,10 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     """语音问答返回"""
     answer: str = Field(..., description="模型回答（已优化为老年人友好的语气）")
+    is_demo: bool = Field(
+        False,
+        description="True 表示 AI 不可用（未配 Key / 调用失败），当前是预置兜底回答，界面须标注",
+    )
 
 
 class TTSRequest(BaseModel):

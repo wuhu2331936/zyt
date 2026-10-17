@@ -17,6 +17,9 @@
       >
         <div class="bubble">
           {{ m.content }}
+          <span v-if="m.role === 'assistant' && m.isDemo" class="demo-flag">
+            ⚠️ AI 不可用，这是预置兜底回答
+          </span>
         </div>
       </div>
 
@@ -40,9 +43,13 @@
         </template>
       </van-field>
       <VoiceButton
+        v-if="asrSupported"
         :on-result="onVoiceResult"
         :on-error="onVoiceError"
       />
+      <p v-else class="asr-unsupported">
+        当前浏览器不支持语音识别（仅 Chrome / Edge / Safari 可用），请直接在上方输入文字提问
+      </p>
       <p class="footer-tip">
         <van-icon name="info-o" />
         当前用药 {{ medicines.length }} 种，回答时会一并考虑
@@ -58,7 +65,7 @@ import { showToast, showDialog } from 'vant'
 import { useVoiceStore } from '@/stores/voice'
 import { useMedicineStore } from '@/stores/medicine'
 import { voiceChat, textToSpeech } from '@/api/voice'
-import { playAudio } from '@/utils/audio'
+import { playAudio, isASRSupported } from '@/utils/audio'
 import VoiceButton from '@/components/VoiceButton.vue'
 import EmptyState from '@/components/EmptyState.vue'
 
@@ -70,6 +77,8 @@ const { medicines } = storeToRefs(medicineStore)
 const textInput = ref('')
 const loading = ref(false)
 const chatArea = ref(null)
+// QQ 浏览器 / 微信内置浏览器不支持 Web Speech API，提前判断避免按钮点了没反应
+const asrSupported = ref(isASRSupported())
 
 function scrollToBottom() {
   nextTick(() => {
@@ -107,7 +116,11 @@ async function ask(question) {
       .map((m) => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content }))
     const res = await voiceChat({ question, medicineContext: ctx, history: hist })
 
-    voiceStore.addMessage({ role: 'assistant', content: res.answer })
+    voiceStore.addMessage({
+      role: 'assistant',
+      content: res.answer,
+      isDemo: res.isDemo,
+    })
     scrollToBottom()
 
     // 自动 TTS 播放
@@ -203,5 +216,18 @@ function confirmClear() {
   font-size: 12px;
   color: #999;
   text-align: center;
+}
+.demo-flag {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #ff976a;
+}
+.asr-unsupported {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #ff976a;
+  text-align: center;
+  line-height: 1.5;
 }
 </style>
