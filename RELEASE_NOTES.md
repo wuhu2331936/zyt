@@ -1,3 +1,40 @@
+# 版本发布说明
+
+## v0.4.1 — 语音输入服务端化（2026-10-31）
+
+**核心修复：手机端「按住说话」不再失效。**
+
+此前依赖浏览器原生 `webkitSpeechRecognition`，在国内手机上基本不可用：
+
+| 运行环境 | 实际情况 |
+| --- | --- |
+| Android Chrome / Edge | API 存在但录音需送 Google 服务器，国内连不通 → `error=network` |
+| 微信 / QQ / UC 内置浏览器 | 无此 API |
+| iOS App 内置 WKWebView | 同样不可用 |
+
+由于能力检测仍返回 `true`，按钮会正常显示、点击后却始终没有结果，长期被误判为代码缺陷。
+
+改造内容：
+
+- 新增 `backend/app/services/asr.py` + `POST /api/voice/asr`，由服务端调用阿里云百炼 Paraformer 转写，
+  模型三级回退 + OpenAI 兼容接口兜底，**复用现有 DashScope Key，无需新增环境变量**
+- 前端改用 Web Audio 采集 PCM → 降采样 16kHz → 封装 WAV 上传
+  （统一 WAV 是因为云端镜像无 ffmpeg，无法转码 iOS 的 aac / Android 的 opus）
+- 修复 `AudioContext` 创建顺序：必须先 `getUserMedia()` 再 `new AudioContext()`，
+  顺序颠倒时 `onaudioprocess` 一次都不触发（实测 3 秒：0 帧 → 11 帧）
+- 新增 `unlockAudio` / `unlockSpeech`：iOS 音频需在用户手势同步栈内解锁，否则回答语音也放不出来
+- 健壮性：静音早退提示「没听到声音」、30 秒录音上限（约 480KB，避开网关 body 限制）、
+  权限被拒与非 HTTPS 分别给出针对性提示、演示模式返回预置问句
+
+## v0.4.0 — 云端部署与评审材料（2026-10-17）
+
+- 后端版本号对齐；部署至腾讯云 CloudBase 云托管
+- 修复 TTS 500：`edge-tts` 升级至 7.3.1（微软签名变更导致 403），不可用时返回 204 静默降级浏览器语音
+- 新增省赛版长视频录制脚本 `scripts/record_long_video.py`
+- 作品介绍文档配图更换为线上真机截图
+
+---
+
 # 🎉 比赛版本完成（v0.3.0）
 
 > 本文件作为项目交付封档说明。
