@@ -23,10 +23,14 @@ EXCLUDE_DIRS = {
     "venv", ".venv", "node_modules", ".git", "__pycache__",
     ".pytest_cache", ".mypy_cache", ".vite", "dist_old",
     ".idea", ".vscode", "logs", "chroma_db",
+    # Android 构建产物（保留 android 源码，排除 build / .gradle）
+    "build", ".gradle", ".cxx", "dist_bak", ".kotlin", "local.properties_tmp",
 }
-EXCLUDE_FILES = {".env", ".DS_Store", "thumbs.db"}
+EXCLUDE_FILES = {".env", ".DS_Store", "thumbs.db", "local.properties"}
 # 媒体 / 压缩包不进源码包：评审包只要能跑起来的代码，视频单独交付
 EXCLUDE_SUFFIX = {".pyc", ".pyo", ".log", ".tmp", ".bak", ".mp4", ".webm", ".zip", ".bundle"}
+# 签名密钥是敏感文件，绝不进提交包（评审只需 APK，不需要密钥）
+EXCLUDE_KEYWORDS = ("keystore",)
 
 
 def should_skip(rel: Path) -> bool:
@@ -38,6 +42,8 @@ def should_skip(rel: Path) -> bool:
     if rel.name in EXCLUDE_FILES:
         return True
     if rel.suffix in EXCLUDE_SUFFIX:
+        return True
+    if any(k in rel.name.lower() for k in EXCLUDE_KEYWORDS):
         return True
     return False
 
