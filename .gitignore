@@ -62,3 +62,5 @@ backend/uploads/
 # 敏感文件
 *.pem
 *.key
+# 签名密钥（本地保留，不入仓库）
+*.keystore
