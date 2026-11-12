@@ -2,6 +2,18 @@
 
 本项目遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/) 规范。
 
+## [0.4.2] - 2026-11-12
+
+### 修复
+- **CORS**：Capacitor 原生壳源（https://localhost 等）加入白名单，修复 APK 内所有接口报"网络错误"
+- **拍照**：识药页拆分「拍照识别 / 从相册选择」双入口，拍照 input 带 capture="environment"，恢复实时拍摄
+- **冷启动**：5xx/无响应自动重试加深到 3 次（2s/6s/12s）；App 启动先预热云实例
+- 演示模式探测改走 axios 实例（相对路径在壳内打到 localhost 404）
+
+### 其他
+- 原生 Android APK（Capacitor 6，签名 release）作为省赛交付物
+- 新增《独立价值论证》docs/VALUE_PROPOSITION.md
+
 ## [Unreleased]
 
 ### 🐛 Fix - 手机端语音输入不可用（真机根因修复）
