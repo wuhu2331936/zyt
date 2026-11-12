@@ -9,29 +9,35 @@
         <p>AI 自动识别药品名、规格、用法用量</p>
       </div>
 
-      <div class="upload-zone" @click="pickImage">
+      <div class="upload-zone" @click="openCamera">
         <div class="upload-inner">
-          <div class="upload-emoji">🖼️</div>
-          <b>点击选择 / 拍摄照片</b>
-          <span>支持 JPG、PNG，单张即可</span>
+          <div class="upload-emoji">📸</div>
+          <b>点击拍照识药</b>
+          <span>对准药盒正面，光线充足效果更好</span>
         </div>
       </div>
 
-      <van-uploader
-        v-model="fileList"
-        :after-read="afterRead"
-        :max-count="1"
+      <div class="upload-actions">
+        <van-button icon="photograph" type="primary" round block size="large" @click="openCamera">
+          拍照识别
+        </van-button>
+        <van-button icon="photo-o" plain type="primary" round block size="large" @click="openAlbum">
+          从相册选择
+        </van-button>
+      </div>
+
+      <!-- 拍照：capture=environment 直接唤起后置相机（APK WebView / 手机浏览器必带，
+           否则 Android 只弹文件选择器、没有拍照选项） -->
+      <input
+        ref="cameraInput"
+        type="file"
         accept="image/*"
-        :preview-image="false"
-        class="uploader"
-        ref="uploaderRef"
-      >
-        <template #default>
-          <van-button icon="plus" type="primary" round block size="large">
-            选择照片
-          </van-button>
-        </template>
-      </van-uploader>
+        capture="environment"
+        hidden
+        @change="onFileChange"
+      />
+      <!-- 相册：不带 capture -->
+      <input ref="albumInput" type="file" accept="image/*" hidden @change="onFileChange" />
 
       <van-cell-group inset class="tips">
         <van-cell title="📌 拍照小贴士" />
@@ -90,24 +96,34 @@ import { useMedicineStore } from '@/stores/medicine'
 const router = useRouter()
 const medicineStore = useMedicineStore()
 
-const fileList = ref([])
 const loading = ref(false)
 const result = ref(null)
-const uploaderRef = ref(null)
+const cameraInput = ref(null)
+const albumInput = ref(null)
 
-// 点击自定义上传区 -> 触发 Vant Uploader 的隐藏 input
-function pickImage() {
-  const el = uploaderRef.value?.$el?.querySelector?.('input[type=file]')
-  if (el) el.click()
+// 拍照：带 capture 的 input 在 Android WebView / 手机浏览器直接唤起相机
+function openCamera() {
+  cameraInput.value?.click()
 }
 
-async function afterRead(file) {
-  // file.file 是浏览器 File 对象
-  if (!file?.file) return
+// 相册：不带 capture，弹系统文件/相册选择器
+function openAlbum() {
+  albumInput.value?.click()
+}
+
+async function onFileChange(e) {
+  const file = e.target?.files?.[0]
+  // 重置 input.value，保证重复选同一张照片也能再次触发 change
+  e.target.value = ''
+  if (!file) return
+  await processFile(file)
+}
+
+async function processFile(file) {
   loading.value = true
   result.value = null
   try {
-    const res = await recognizeMedicine(file.file)
+    const res = await recognizeMedicine(file)
     if (res.success && res.medicine) {
       result.value = res
       if (res.medicine.source === 'demo') {
@@ -207,11 +223,16 @@ function addToList() {
   color: #97a1b0;
 }
 
-/* 隐藏 Vant 原生选择按钮（保留功能，用自定义区触发） */
-.uploader {
-  height: 0;
-  overflow: hidden;
+/* 双按钮上传入口 */
+.upload-actions {
+  display: flex;
+  gap: 12px;
+  margin: 12px 0 4px;
 }
+.upload-actions :deep(.van-button) {
+  flex: 1;
+}
+
 .tips {
   margin-top: 8px;
 }

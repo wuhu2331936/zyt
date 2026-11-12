@@ -31,6 +31,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useReminderStore } from '@/stores/reminder'
 import { requestNotifyPermission, startReminderWatcher } from '@/utils/reminderWatcher'
+import request from '@/api/request'
 
 const route = useRoute()
 const activeTab = ref(0)
@@ -41,10 +42,13 @@ const demoMode = ref(false)
 const bannerClosed = ref(false)
 
 onMounted(async () => {
+  // 启动即预热 + 探测演示模式：
+  // 1) APK 里页面源是 https://localhost，绝不能用相对路径 /api/health（会打到壳内部）；
+  // 2) 云托管 min instance=0，空闲后缩容——开机先打一次 health 把实例唤醒，
+  //    用户真正用识药/问答时就不会吃冷启动 503（axios 层还有 5xx 自动重试兜底）。
   try {
-    const res = await fetch('/api/health')
-    const data = await res.json()
-    demoMode.value = !!data.demo_mode
+    const data = await request.get('/health', { silent: true })
+    demoMode.value = !!data?.demo_mode
   } catch {
     demoMode.value = false
   }

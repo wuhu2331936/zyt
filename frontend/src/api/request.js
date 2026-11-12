@@ -26,14 +26,18 @@ request.interceptors.response.use(
   async (error) => {
     const config = error.config || {}
 
-    // 一次性自动重试：云托管（min instance=0）空闲缩容后，第一个请求常被网关
-    // 以 503 拒绝（此时实例正在拉起）。重试一次通常就能成功，老人不必再点一遍。
-    // 只对「服务端 5xx」或「完全无响应」重试，且每条请求最多重试一次。
+    // 自动重试：云托管（min instance=0）空闲缩容后，第一批请求常被网关
+    // 以 503 拒绝（此时实例正在拉起，最长可能 30 秒）。递增间隔重试最多 3 次，
+    // 老人不必再点一遍。只对「服务端 5xx」或「完全无响应」重试。
+    // 静音请求（App 启动预热、TTS 等）同样重试——否则预热会白白失败——
+    // 只是失败后不弹 Toast（由调用方自行降级）。
     const status = error.response?.status
-    const retryable = !status || status >= 500 || status === 503
-    if (retryable && !config._retried && !config.silent) {
-      config._retried = true
-      await new Promise((r) => setTimeout(r, 2000))
+    const retryable = !status || status >= 500
+    const attempt = (config._retryAttempt || 0) + 1
+    const backoffs = [2000, 6000, 12000]
+    if (retryable && attempt <= backoffs.length) {
+      config._retryAttempt = attempt
+      await new Promise((r) => setTimeout(r, backoffs[attempt - 1]))
       try {
         return await request.request(config)
       } catch {
