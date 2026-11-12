@@ -33,11 +33,26 @@ def _build_cors_origins() -> list[str]:
     开发环境默认值 "http://localhost:5173,http://127.0.0.1:5173"
     生产环境填前端 Vercel/Netlify 域名，例如：
       FRONTEND_URL=https://zhijiayaotong.vercel.app
+
+    Android/iOS 原生壳（Capacitor APK）里页面的源是 https://localhost，
+    不在 FRONTEND_URL 列表里会被 CORS 拦掉，表现为 App 内所有 AI 接口
+    报「网络错误」（手机有网也一样）——所以这里无条件追加原生壳默认源。
     """
     raw = settings.frontend_url.strip()
-    if not raw or raw == "*":
-        return ["*"]
-    return [url.strip() for url in raw.split(",") if url.strip()]
+    origins = ["*"] if (not raw or raw == "*") else [
+        url.strip() for url in raw.split(",") if url.strip()
+    ]
+    # Capacitor 原生壳（Android: https://localhost，iOS: capacitor://localhost）
+    # 及本机调试场景共用的源，永远放行
+    origins += [
+        "https://localhost",
+        "http://localhost",
+        "capacitor://localhost",
+        "ionic://localhost",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
+    return origins
 
 
 # CORS：生产环境根据 FRONTEND_URL 收紧；开发环境允许所有
